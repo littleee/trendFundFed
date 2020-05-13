@@ -1,0 +1,12 @@
+# dependencies
+/node_modules
+/dist
+
+
+# misc
+.DS_Store
+.env
+.idea
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
