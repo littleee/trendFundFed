@@ -1,4 +1,5 @@
-const { override, fixBabelImports, addWebpackPlugin } = require('customize-cra');
+const { override, fixBabelImports, addWebpackPlugin, useBabelRc, disableEsLint } = require('customize-cra');
+const {injectBabelPlugin} = require('react-app-rewired');
 const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin');
 
  module.exports = override(
@@ -6,5 +7,7 @@ const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin');
      libraryDirectory: 'es',
      style: 'css',
    }),
-   addWebpackPlugin(new AntdDayjsWebpackPlugin())
+   addWebpackPlugin(new AntdDayjsWebpackPlugin()),
+   disableEsLint(),
+   useBabelRc()
  );

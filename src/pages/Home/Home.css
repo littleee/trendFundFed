@@ -1,0 +1,98 @@
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  background: #001529;
+}
+.header .logo {
+  height: 20px;
+}
+
+.divider {
+  border-color: #000;
+  opacity:0.8;
+  margin: 0;
+}
+
+.banner {
+  height: 380px;
+  background: #001529;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.title-wrapper {
+  color: #fff;
+  margin-top: -60px;
+}
+
+.title-wrapper .title {
+  font-size:36px;
+  font-family: PingFang SC;
+  font-weight: 100;
+  color:rgba(255,255,255,1);
+  margin-bottom: 17px;
+  text-align: center;
+}
+
+.title-wrapper .sub-title {
+  font-size:16px;
+  font-family:PingFang SC;
+  font-weight: 100;
+  color:rgba(255,255,255,1);
+  text-align: center;
+}
+
+.card {
+  max-width: 1120px;
+  width: 100%;
+  border-radius: 6px;
+  margin: -64px auto 0 auto;
+}
+
+.card .card-title-wrapper {
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  padding: 15px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card .card-title {
+  font-size:18px;
+  font-family:PingFang SC;
+  font-weight:400;
+  color:rgba(19,24,31,1);
+  padding-right: 6px;
+}
+
+.card .card-subtitle {
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  font-size:12px;
+  font-family:PingFang SC;
+  font-weight:400;
+  color:rgba(19,24,31,0.6);
+  padding: 2px 6px;
+  margin: 0 6px;
+}
+
+.card .title-wrapper-left {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ant-card-body {
+  padding: 0;
+}
+.card-left {
+  padding: 20px;
+}
+.card-right {
+  padding: 40px;
+}
