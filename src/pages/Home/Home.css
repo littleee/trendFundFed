@@ -1,16 +1,3 @@
-.header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 60px;
-  line-height: 60px;
-  background: #001529;
-}
-.header .logo {
-  height: 20px;
-}
-
 .divider {
   border-color: #000;
   opacity:0.8;
@@ -52,6 +39,8 @@
   width: 100%;
   border-radius: 6px;
   margin: -64px auto 0 auto;
+  box-shadow:0px 6px 13px 0px rgba(0, 0, 0, 0.03);
+  border-radius:6px;
 }
 
 .card .card-title-wrapper {
@@ -91,8 +80,73 @@
   padding: 0;
 }
 .card-left {
-  padding: 20px;
+  padding: 0 20px;
 }
 .card-right {
-  padding: 40px;
+  padding: 0 20px;
+  border-left: 1px solid rgba(0, 0, 0, .1);
+  display: flex;
+  align-items: center;
+}
+
+.card-right-title {
+  font-size:14px;
+  font-family:PingFang SC;
+  font-weight:400;
+  color:rgba(19,24,31,1);
+  opacity:0.4;
+  margin: 0;
+}
+
+.more {
+  font-size:14px;
+  font-family:PingFang SC;
+  font-weight:400;
+  color:rgba(19,24,31,1);
+  opacity:0.6;
+  margin: 80px auto;
+  text-align: center;
+}
+
+.card-right-content {
+  font-size:18px;
+  font-family:PingFang SC;
+  font-weight:600;
+}
+.green {
+  color:rgba(18,186,46,1);
+}
+.red {
+  color:rgba(214,85,55,1);
+}
+.size-30 {
+  font-size: 30px;
+}
+.grey {
+  color:rgba(19,24,31, 0.6);
+}
+
+.footer {
+  background: #001529;
+  text-align: center;
+}
+.footer-title {
+  font-size:18px;
+  font-family:PingFang SC;
+  font-weight:400;
+  color:rgba(255,255,255,1);
+}
+
+.footer-subtitle {
+  font-size:14px;
+  font-family:PingFang SC;
+  font-weight:400;
+  color:rgba(255,255,255,1);
+  opacity:0.6;
+  margin-bottom: 60px;
+}
+
+.footer-icon {
+  width: 412px;
+  margin-bottom: 108px;
 }
