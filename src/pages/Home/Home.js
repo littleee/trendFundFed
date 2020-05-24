@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import footerIcon from './footer.png';
+import bannerIcon from './banner.png';
 import { Layout, Row, Divider, Card, Typography, Col } from 'antd';
 import { BannerAnimation } from '../../components/BannerAnimation';
 import { LineChart } from '../../components/LineChart';
@@ -8,6 +9,7 @@ import echarts from 'echarts'
 import cn from 'classnames'
 import styled from "styled-components";
 import { useParams } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 const { Text } = Typography;
 const { Content, Footer } = Layout;
@@ -30,8 +32,8 @@ const HomeComponent = ({className}) => {
     setHandleData(handleBtc);
     const startPriceByT1 = t1[0][1];
     const startPriceByHandle = handleBtc[0][1]
-    const t1Income = t1.map(x=>[x[0] * 1000, ((x[1]/startPriceByT1 - 1) * 100).toFixed(2)]);
-    const handleIncome = handleBtc.map(x=>[x[0] * 1000, ((x[1]/startPriceByHandle - 1) * 100).toFixed(2)]);
+    const t1Income = t1.map(x=>[x[0] * 1000, ((x[1]/startPriceByT1 - 1) * 100).toFixed(4)]);
+    const handleIncome = handleBtc.map(x=>[x[0] * 1000, ((x[1]/startPriceByHandle - 1) * 100).toFixed(4)]);
     setT1Income(t1Income);
     setHandleIncome(handleIncome)
   };
@@ -50,23 +52,23 @@ const HomeComponent = ({className}) => {
             const dateFormat = echarts.format.formatTime("yyyy-MM-dd hh:mm:ss", date)
             var returnHtmT1 = `${params[0].data[1]} %`;
             var returnHtmlBTC = `${params[1].data[1]} %`;
-            return `<span>${dateFormat}</span><br/><span>${returnHtmT1}</span> <br/> <span>${returnHtmlBTC}</span>`;
+            return `<span>${dateFormat}</span><br/><span>本策略： ${returnHtmT1}</span> <br/> <span>BTCUSD：  ${returnHtmlBTC}</span>`;
           },
       },
       legend: {
         data: [{
-          name: '本产品',
+          name: '本策略',
           // 强制设置图形为圆。
           icon: 'circle',
         },
         {
-          name: '持有BTC',
+          name: 'BTCUSD',
           // 强制设置图形为圆。
           icon: 'circle',
         }],
         formatter: (name) =>{
-          const value = name === '本产品' ? t1Income : handleIncome;
-          return value.length === 0 ? `${name} +0.00%` : `${name} +${value[value.length -1][1]}%`
+          const value = name === '本策略' ? t1Income : handleIncome;
+          return value.length === 0 ? `${name} +0.00%` : `${name} ${value[value.length -1][1]}%`
         },
         right: 0,
         top: 3
@@ -80,6 +82,9 @@ const HomeComponent = ({className}) => {
 
       xAxis: {
           type: 'time',
+          splitLine: {
+            show: false
+          }
       },
       yAxis: {
           type: 'value',
@@ -87,23 +92,30 @@ const HomeComponent = ({className}) => {
              show:true,
              formatter:'{value} %'
           },
+          splitLine: {
+            show: true
+          }
       },
       series: [
           {
-              name: '本产品',
+              name: '本策略',
               type: 'line',
               data: t1Income,
+              showSymbol: false,
+              hoverAnimation: true,
               itemStyle: {
                 color: '#ED662C'
               }
           },
           {
-              name: '持有BTC',
+              name: 'BTCUSD',
               type: 'line',
               data: handleIncome,
               itemStyle: {
                 color: '#50B7F9'
-              }
+              },
+              showSymbol: false,
+              hoverAnimation: true,
           },
       ]
   };
@@ -141,13 +153,13 @@ const HomeComponent = ({className}) => {
       const runDays = (end - start) / (24 * 60 * 60);
       return Math.ceil(runDays)
     }
+    return  '--'
   }
   return (
     <Layout className={className}>
       <Divider className="divider"/>
       <Content>
         <Row className="banner">
-          <BannerAnimation />
           <div className="title-wrapper">
             <p className="title">趋势中的数字黄金</p>
             <p className="sub-title">加密货币CTA策略</p>
@@ -156,15 +168,15 @@ const HomeComponent = ({className}) => {
         <Row className="content">
           <Card className="card">
             <Row className="card-title-wrapper">
-              <div className="title-wrapper-left">
-              <Text className="card-title">T1 趋势跟踪策略</Text>
-              <Text className="card-subtitle">远超基准</Text>
-              <Text className="card-subtitle">双向持仓</Text>
-              <Text className="card-subtitle">超低杠杆</Text>
-              </div>
+              <Col sm={4} xs={24}><Text className="card-title">T1 趋势跟踪策略</Text></Col>
+              <Col sm={20} xs={24}>
+                <Text className="card-subtitle">远超基准</Text>
+                <Text className="card-subtitle">双向持仓</Text>
+                <Text className="card-subtitle">超低杠杆</Text>
+              </Col>
               <div>
               {
-                params.action && <a href={`/details/${params.action}`}>策略详情></a>
+                params.action && <a href={`/#/details/${params.action}`}>策略详情></a>
               }
               </div>
             </Row>
@@ -179,37 +191,37 @@ const HomeComponent = ({className}) => {
               <Col sm={8} xs={24} className="card-right">
                 <div style={{width: '100%'}}>
                 <Row>
-                  <Col sm={12}>
+                  <Col xs={12}>
                     <p className="card-right-title">成立以来收益</p>
-                    <p className="card-right-content green size-30">{t1Data.length > 0 ? `${getIncomeSinceStart(t1Data[0][1], t1Data[t1Data.length - 1][1]).toFixed(2)} % `: '0 %'}</p>
+                    <p className="card-right-content green size-30">{t1Data.length > 0 ? `${getIncomeSinceStart(t1Data[0][1], t1Data[t1Data.length - 1][1]).toFixed(4)} % `: '0 %'}</p>
                   </Col>
-                  <Col sm={12}>
-                    <p className="card-right-title">最新净值（05-10）</p>
-                    <p className="card-right-content"><span className="size-30">{t1Data.length > 0  && t1Data[t1Data.length - 1][1].toFixed(2)}</span> <span className="grey">USD</span></p>
+                  <Col xs={12}>
+                    <p className="card-right-title">最新净值 ({t1Data.length > 0 ? dayjs(t1Data[t1Data.length - 1][0] * 1000).format('MM-DD') : '--'}）</p>
+                    <p className="card-right-content"><span className="size-30">{t1Data.length > 0 ? t1Data[t1Data.length - 1][1].toFixed(4) : '--'}</span> <span className="grey">USD</span></p>
                   </Col>
                 </Row>
                 <Row>
-                  <Col sm={8}>
+                  <Col xs={8}>
                     <p className="card-right-title">24H涨跌</p>
-                    <p className={cn('card-right-content', isUp(getIncomeByTimes(1)) ? 'green' : 'red')}>{getIncomeByTimes(1).toFixed(2)} %</p>
+                    <p className={cn('card-right-content', isUp(getIncomeByTimes(1)) ? 'green' : 'red')}>{getIncomeByTimes(1).toFixed(4)} %</p>
                   </Col>
-                  <Col sm={8}>
+                  <Col xs={8}>
                   <p className="card-right-title">近1月涨跌</p>
-                  <p className={cn('card-right-content', isUp(getIncomeByTimes(30)) ? 'green' : 'red')}>{getIncomeByTimes(30).toFixed(2)} %</p>
+                  <p className={cn('card-right-content', isUp(getIncomeByTimes(30)) ? 'green' : 'red')}>{getIncomeByTimes(30).toFixed(4)} %</p>
                   </Col>
-                  <Col sm={8}>
+                  <Col xs={8}>
                   <p className="card-right-title">近3月涨跌</p>
-                  <p className={cn('card-right-content', isUp(getIncomeByTimes(90)) ? 'green' : 'red')}>{getIncomeByTimes(90).toFixed(2)} %</p>
+                  <p className={cn('card-right-content', isUp(getIncomeByTimes(90)) ? 'green' : 'red')}>{getIncomeByTimes(90).toFixed(4)} %</p>
                   </Col>
                 </Row>
                 <Row>
-                  <Col sm={8}>
+                  <Col xs={8}>
                     <p className="card-right-title">运行天数</p>
                     <p className="card-right-content">{getRunDays()}</p>
                   </Col>
-                  <Col sm={16}>
+                  <Col xs={16}>
                     <p className="card-right-title">交易标的</p>
-                    <p className="card-right-content">BitMEX XBTUSD</p>
+                    <p className="card-right-content">BTCUSD 永续合约</p>
                   </Col>
                 </Row>
                 </div>
@@ -242,6 +254,10 @@ const HomeComponent = ({className}) => {
     display: flex;
     justify-content: center;
     align-items: center;
+    background-image: url(${bannerIcon});
+    background-position: 50%;
+    background-size: contain;
+    background-repeat: no-repeat;
   }
 
   .title-wrapper {
@@ -252,7 +268,7 @@ const HomeComponent = ({className}) => {
   .title-wrapper .title {
     font-size:36px;
     font-family: PingFang SC;
-    font-weight: 100;
+    font-weight: 200;
     color:rgba(255,255,255,1);
     margin-bottom: 17px;
     text-align: center;
@@ -261,7 +277,7 @@ const HomeComponent = ({className}) => {
   .title-wrapper .sub-title {
     font-size:16px;
     font-family:PingFang SC;
-    font-weight: 100;
+    font-weight: 200;
     color:rgba(255,255,255,1);
     text-align: center;
   }
@@ -302,17 +318,12 @@ const HomeComponent = ({className}) => {
     margin: 0 6px;
   }
 
-  .card .title-wrapper-left {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
   .ant-card-body {
     padding: 0;
   }
   .card-left {
     padding: 0 20px;
+    margin-bottom: 20px;
   }
   .card-right {
     padding: 0 20px;
@@ -379,7 +390,14 @@ const HomeComponent = ({className}) => {
   }
 
   .footer-icon {
-    width: 412px;
+    width: 100%;
+    max-width: 412px;
     margin-bottom: 108px;
+  }
+
+  @media (max-width: 375px){
+    .banner {
+      background-size: cover;
+    }
   }
 `

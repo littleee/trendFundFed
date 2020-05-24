@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import './Details.css';
 import { Layout, Row, Divider, Card, Typography, Col, Table } from 'antd';
 import { BannerAnimation } from '../../components/BannerAnimation';
 import { LineChart } from '../../components/LineChart';
@@ -33,8 +32,8 @@ export const DetailsComponent = ({className}) => {
     setHandleData(handleBtc);
     const startPriceByT1 = t1[0][1];
     const startPriceByHandle = handleBtc[0][1]
-    const t1Income = t1.map(x=>[x[0] * 1000, ((x[1]/startPriceByT1 - 1) * 100).toFixed(2)]);
-    const handleIncome = handleBtc.map(x=>[x[0] * 1000, ((x[1]/startPriceByHandle - 1) * 100).toFixed(2)]);
+    const t1Income = t1.map(x=>[x[0] * 1000, ((x[1]/startPriceByT1 - 1) * 100).toFixed(4)]);
+    const handleIncome = handleBtc.map(x=>[x[0] * 1000, ((x[1]/startPriceByHandle - 1) * 100).toFixed(4)]);
     setT1Income(t1Income);
     setHandleIncome(handleIncome)
   };
@@ -157,7 +156,7 @@ export const DetailsComponent = ({className}) => {
           cost: curr[2],
           share: curr[3].toFixed(0),
           key:curr[0],
-          incomeRate: index !== arr.length-1 ? `${((curr[1] / arr[index + 1][1] - 1) * 100).toFixed(2)} %` : '0 %'
+          incomeRate: index !== arr.length-1 ? `${((curr[1] / arr[index + 1][1] - 1) * 100).toFixed(4)} %` : '0 %'
         }
         return [...acc, obj]
       },[])
@@ -254,19 +253,19 @@ export const DetailsComponent = ({className}) => {
             <Row>
               <Col sm={8}>
                 <p className="card-right-title">成立以来收益</p>
-                <p className="card-right-content green size-30">{`${(getIncomeRate(t1Data) * 100).toFixed(2)} % `}</p>
+                <p className="card-right-content green size-30">{`${(getIncomeRate(t1Data) * 100).toFixed(4)} % `}</p>
               </Col>
               <Col sm={8}>
                 <p className="card-right-title">最新净值（05-10）</p>
-                <p className="card-right-content"><span className="size-30">{t1Data.length > 0  && t1Data[t1Data.length - 1][1].toFixed(2)}</span> <span className="grey">USD</span></p>
+                <p className="card-right-content"><span className="size-30">{t1Data.length > 0  && t1Data[t1Data.length - 1][1].toFixed(4)}</span> <span className="grey">USD</span></p>
               </Col>
               <Col sm={8}>
                 <p className="card-right-title">24H涨跌</p>
-                <p className={cn('card-right-content', isUp(getIncomeByTimes(1)) ? 'green' : 'red')}><span className="size-30">{getIncomeByTimes(1).toFixed(2)} %</span></p>
+                <p className={cn('card-right-content', isUp(getIncomeByTimes(1)) ? 'green' : 'red')}><span className="size-30">{getIncomeByTimes(1).toFixed(4)} %</span></p>
               </Col>
             </Row>
             <Row>
-              <Col sm={24} className="card-left">
+              <Col xs={24} className="card-left">
               {
                 <LineChart
                   option={option}
@@ -277,11 +276,11 @@ export const DetailsComponent = ({className}) => {
             <Row>
               <Col sm={6}>
               <p className="card-right-title">近1月涨跌</p>
-              <p className={cn('card-right-content', isUp(getIncomeByTimes(30)) ? 'green' : 'red')}>{getIncomeByTimes(30).toFixed(2)} %</p>
+              <p className={cn('card-right-content', isUp(getIncomeByTimes(30)) ? 'green' : 'red')}>{getIncomeByTimes(30).toFixed(4)} %</p>
               </Col>
               <Col sm={6}>
               <p className="card-right-title">近3月涨跌</p>
-              <p className={cn('card-right-content', isUp(getIncomeByTimes(90)) ? 'green' : 'red')}>{getIncomeByTimes(90).toFixed(2)} %</p>
+              <p className={cn('card-right-content', isUp(getIncomeByTimes(90)) ? 'green' : 'red')}>{getIncomeByTimes(90).toFixed(4)} %</p>
               </Col>
               <Col sm={6}>
                 <p className="card-right-title">运行天数</p>
@@ -317,7 +316,7 @@ export const DetailsComponent = ({className}) => {
           </Col>
           <Col sm={12}>
             <p className="card-right-title">持仓收益</p>
-            <p className={cn('card-right-content', isUp(getIncomeRate(personData)) ? 'green' : 'red')}><span className="size-30">{`${(getIncomeRate(personData) * 100).toFixed(2)} % `}</span></p>
+            <p className={cn('card-right-content', isUp(getIncomeRate(personData)) ? 'green' : 'red')}><span className="size-30">{`${(getIncomeRate(personData) * 100).toFixed(4)} % `}</span></p>
           </Col>
           <Col sm={12}>
             <p className="card-right-title">持仓份额</p>
