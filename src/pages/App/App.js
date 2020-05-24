@@ -1,17 +1,30 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import './App.css';
 import { Home } from '../Home';
+import { Details } from '../Details';
 import logo from './logo.png';
 import { Layout } from 'antd';
+import {
+  Route,
+  Routes
+} from 'react-router-dom';
 
 const { Header } = Layout;
 function App() {
   return (
     <div className="app">
-    <Header className="header">
-      <img src={logo} alt="logo" className="logo"/>
-    </Header>
-      <Home />
+    <Suspense fallback={
+        <>loading...</>
+    }>
+      <Header className="header">
+        <img src={logo} alt="logo" className="logo"/>
+      </Header>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/:action" element={<Home />} />
+          <Route path="details/:user" element={<Details />} />
+        </Routes>
+    </Suspense>
     </div>
   );
 }
