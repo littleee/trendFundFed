@@ -20,6 +20,7 @@ const HomeComponent = ({className}) => {
   const [handleIncome, setHandleIncome] = useState([]);
   const [t1Data, setT1Data] = useState([]);
   const [handleData, setHandleData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const params = useParams();
 
   useEffect(()=> {
@@ -36,6 +37,7 @@ const HomeComponent = ({className}) => {
     const handleIncome = handleBtc.map(x=>[x[0] * 1000, ((x[1]/startPriceByHandle - 1) * 100).toFixed(4)]);
     setT1Income(t1Income);
     setHandleIncome(handleIncome)
+    setIsLoading(false)
   };
 
   fetchCharts();
@@ -185,6 +187,7 @@ const HomeComponent = ({className}) => {
               {
                 <LineChart
                   option={option}
+                  showLoading={isLoading}
                 />
               }
               </Col>
@@ -250,7 +253,7 @@ const HomeComponent = ({className}) => {
 
   .banner {
     height: 380px;
-    background: #001529;
+    background: rgb(14,16,20);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -370,7 +373,7 @@ const HomeComponent = ({className}) => {
   }
 
   .footer {
-    background: #001529;
+    background: rgb(14,16,20);
     text-align: center;
   }
   .footer-title {
