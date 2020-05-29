@@ -168,10 +168,8 @@ const HomeComponent = ({className}) => {
           <Card className="card">
             <Row className="card-title-wrapper">
               <Col sm={4} xs={24}><Text className="card-title">T1 趋势跟踪策略</Text></Col>
-              <Col sm={20} xs={24}>
-                <Text className="card-subtitle">远超基准</Text>
-                <Text className="card-subtitle">双向持仓</Text>
-                <Text className="card-subtitle">超低杠杆</Text>
+              <Col sm={20} xs={24} style={{textAlign: 'right'}}>
+                <Text className="card-subtitle">运行中</Text>
               </Col>
               <div>
               {
@@ -308,12 +306,12 @@ const HomeComponent = ({className}) => {
   }
 
   .card .card-subtitle {
-    border: 1px solid rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(18,186,46,1);
     border-radius: 3px;
     font-size:12px;
     font-family:PingFang SC;
     font-weight:400;
-    color:rgba(19,24,31,0.6);
+    color:rgba(18,186,46,1);
     padding: 2px 6px;
     margin: 0 6px;
   }
