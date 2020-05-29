@@ -8,6 +8,7 @@ import cn from 'classnames'
 import { useParams } from 'react-router-dom';
 import styled from "styled-components";
 import dayjs from 'dayjs';
+import { getNumberColor, getNumberFormat } from '../../utils';
 
 const { Title, Text } = Typography;
 const { Content, Footer } = Layout;
@@ -54,23 +55,23 @@ export const DetailsComponent = ({className}) => {
             const dateFormat = echarts.format.formatTime("yyyy-MM-dd hh:mm:ss", date)
             var returnHtmT1 = params[0] ? `${params[0].data[1]} %` : '--';
             var returnHtmlBTC = params[1] ? `${params[1].data[1]} %` : '--';
-            return `<span>${dateFormat}</span><br/><span>${returnHtmT1}</span> <br/> <span>${returnHtmlBTC}</span>`;
+            return `<span>${dateFormat}</span><br/><span>本策略：${returnHtmT1}</span> <br/> <span>BTCUSD: ${returnHtmlBTC}</span>`;
           },
       },
       legend: {
         data: [{
-          name: '本产品',
+          name: '本策略',
           // 强制设置图形为圆。
           icon: 'circle',
         },
         {
-          name: '持有BTC',
+          name: 'BTCUSD',
           // 强制设置图形为圆。
           icon: 'circle',
         }],
-        formatter: (name) =>{
-          const value = name === '本产品' ? t1Income : handleIncome;
-          return value.length === 0 ? `${name} +0.00%` : `${name} +${value[value.length -1][1]}%`
+        formatter: (name) => {
+          const value = name === '本策略' ? t1Income : handleIncome;
+          return value.length === 0 ? `${name} +0.00%` : `${name} ${getNumberFormat(value[value.length -1][1])}%`
         },
         right: 0,
         top: 3
@@ -94,7 +95,7 @@ export const DetailsComponent = ({className}) => {
       },
       series: [
           {
-              name: '本产品',
+              name: '本策略',
               type: 'line',
               data: t1Income,
               itemStyle: {
@@ -104,7 +105,7 @@ export const DetailsComponent = ({className}) => {
               hoverAnimation: true,
           },
           {
-              name: '持有BTC',
+              name: 'BTCUSD',
               type: 'line',
               data: handleIncome,
               itemStyle: {
@@ -122,16 +123,28 @@ export const DetailsComponent = ({className}) => {
       dataIndex: 'date',
       key: 'date',
     },
+    // {
+    //   title: '份额',
+    //   dataIndex: 'share',
+    //   key: 'share',
+    // },
     {
-      title: '份额',
-      dataIndex: 'share',
-      key: 'share',
+      title: '市值',
+      dataIndex: 'marketValue',
+      key: 'marketValue',
+      render: (text, row, index) => {
+        const { value, share } = row
+        return (value * share).toFixed(1)
+      }
     },
     {
-      title: '成本',
-      dataIndex: 'cost',
-      key: 'cost',
-    },
+      title: '收益额',
+      dataIndex: 'incomeValue',
+      key: 'incomeValue',
+      render: text => {
+        return (<span className={getNumberColor(text)}>{getNumberFormat(text)}</span>)
+      }
+    }
   ]
   const columnsT1 = [
     {
@@ -148,6 +161,9 @@ export const DetailsComponent = ({className}) => {
       title: '日涨幅',
       dataIndex: 'incomeRate',
       key: 'incomeRate',
+      render: text => {
+        return (<span className={getNumberColor(text)}>{getNumberFormat(text)} %</span>)
+      }
     },
   ]
 
@@ -162,7 +178,8 @@ export const DetailsComponent = ({className}) => {
           cost: curr[2],
           share: curr[3].toFixed(0),
           key:curr[0],
-          incomeRate: index !== arr.length-1 ? `${((curr[1] / arr[index + 1][1] - 1) * 100).toFixed(4)} %` : '0 %'
+          incomeRate: index !== 0 ? `${((arr[index - 1][1] / curr[1] - 1) * 100).toFixed(4)}` : '--',
+          incomeValue: index !== 0 ? `${(arr[index - 1][1] * arr[index - 1][3] - curr[1] * curr[3]).toFixed(1)}` : '--',
         }
         return [...acc, obj]
       },[])
@@ -176,10 +193,6 @@ export const DetailsComponent = ({className}) => {
     const income = (end / start - 1) * 100;
 
     return income
-  }
-
-  const isUp = (num) => {
-    return num >= 0 ? true : false
   }
 
   const getIncomeByTimes = (days) => {
@@ -259,15 +272,15 @@ export const DetailsComponent = ({className}) => {
             <Row className="p-24">
               <Col sm={8} xs={12}>
                 <p className="card-right-title">成立以来收益</p>
-                <p className="card-right-content green size-30">{`${(getIncomeRate(t1Data) * 100).toFixed(4)} % `}</p>
+                <p className="card-right-content green size-30">{`${getNumberFormat((getIncomeRate(t1Data) * 100).toFixed(4))} % `}</p>
               </Col>
               <Col sm={8} xs={12}>
-                <p className="card-right-title">最新净值（05-10）</p>
+                <p className="card-right-title">最新净值（{t1Data.length > 0 ? dayjs(t1Data[t1Data.length - 1][0] * 1000).format('MM-DD') : '--'}）</p>
                 <p className="card-right-content"><span className="size-30">{t1Data.length > 0  && t1Data[t1Data.length - 1][1].toFixed(4)}</span> <span className="grey">USD</span></p>
               </Col>
               <Col sm={8} xs={24}>
                 <p className="card-right-title">24H涨跌</p>
-                <p className={cn('card-right-content', isUp(getIncomeByTimes(1)) ? 'green' : 'red')}><span className="size-30">{getIncomeByTimes(1).toFixed(4)} %</span></p>
+                <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(1)))}><span className="size-30">{getNumberFormat(getIncomeByTimes(1).toFixed(4))} %</span></p>
               </Col>
             </Row>
             <Row>
@@ -283,11 +296,11 @@ export const DetailsComponent = ({className}) => {
             <Row className="p-24">
               <Col sm={6}  xs={12}>
               <p className="card-right-title">近1月涨跌</p>
-              <p className={cn('card-right-content', isUp(getIncomeByTimes(30)) ? 'green' : 'red')}>{getIncomeByTimes(30).toFixed(4)} %</p>
+              <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(30)))}>{getNumberFormat(getIncomeByTimes(30).toFixed(4))} %</p>
               </Col>
               <Col sm={6} xs={12}>
               <p className="card-right-title">近3月涨跌</p>
-              <p className={cn('card-right-content', isUp(getIncomeByTimes(90)) ? 'green' : 'red')}>{getIncomeByTimes(90).toFixed(4)} %</p>
+              <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(90)))}>{getNumberFormat(getIncomeByTimes(90).toFixed(4))} %</p>
               </Col>
               <Col sm={6} xs={12}>
                 <p className="card-right-title">运行天数</p>
@@ -295,7 +308,7 @@ export const DetailsComponent = ({className}) => {
               </Col>
               <Col sm={6} x={12}>
                 <p className="card-right-title">交易标的</p>
-                <p className="card-right-content">BitMEX XBTUSD</p>
+                <p className="card-right-content">BTCUSD 永续合约</p>
               </Col>
             </Row>
           </Card>
@@ -319,11 +332,11 @@ export const DetailsComponent = ({className}) => {
         <Row className="p-24">
           <Col xs={12}>
             <p className="card-right-title">持仓市值</p>
-            <p className="card-right-content"><span className="size-30">{getLastestDataHandleValue(personData).toFixed(0)}</span></p>
+            <p className="card-right-content"><span className="size-30">{getLastestDataHandleValue(personData).toFixed(0)}</span> <span className="grey">USD</span></p>
           </Col>
           <Col xs={12}>
             <p className="card-right-title">持仓收益</p>
-            <p className={cn('card-right-content', isUp(getIncomeRate(personData)) ? 'green' : 'red')}><span className="size-30">{`${(getIncomeRate(personData) * 100).toFixed(4)} % `}</span></p>
+            <p className={cn('card-right-content', getNumberColor(getIncomeRate(personData)))}><span className="size-30">{`${getNumberFormat((getIncomeRate(personData) * 100).toFixed(4))} % `}</span></p>
           </Col>
           <Col xs={12}>
             <p className="card-right-title">持仓份额</p>
@@ -331,7 +344,7 @@ export const DetailsComponent = ({className}) => {
           </Col>
           <Col xs={12}>
             <p className="card-right-title">持仓成本</p>
-            <p className={cn('card-right-content')}><span className="size-30">{getLastestDataCost(personData)}</span></p>
+            <p className={cn('card-right-content')}><span className="size-30">{getLastestDataCost(personData)}</span> <span className="grey">USD</span></p>
           </Col>
         </Row>
         <Table columns={columns} dataSource={dataSource(getDataWith8Hour)(personData)} />
@@ -448,7 +461,7 @@ export const Details = styled(DetailsComponent)`
   color:rgba(214,85,55,1);
 }
 .size-30 {
-  font-size: 30px;
+  font-size: 28px;
 }
 .grey {
   color:rgba(19,24,31, 0.6);

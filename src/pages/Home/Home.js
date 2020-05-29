@@ -10,6 +10,7 @@ import cn from 'classnames'
 import styled from "styled-components";
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
+import { getNumberColor, getNumberFormat } from '../../utils';
 
 const { Text } = Typography;
 const { Content, Footer } = Layout;
@@ -70,7 +71,7 @@ const HomeComponent = ({className}) => {
         }],
         formatter: (name) =>{
           const value = name === '本策略' ? t1Income : handleIncome;
-          return value.length === 0 ? `${name} +0.00%` : `${name} ${value[value.length -1][1]}%`
+          return value.length === 0 ? `${name} +0.00%` : `${name} ${getNumberFormat(value[value.length -1][1])}%`
         },
         right: 0,
         top: 3
@@ -126,10 +127,6 @@ const HomeComponent = ({className}) => {
     const income = (end / start - 1) * 100;
 
     return income
-  }
-
-  const isUp = (num) => {
-    return num >= 0 ? true : false
   }
 
   const getIncomeByTimes = (days) => {
@@ -196,7 +193,7 @@ const HomeComponent = ({className}) => {
                 <Row>
                   <Col xs={12}>
                     <p className="card-right-title">成立以来收益</p>
-                    <p className="card-right-content green size-30">{t1Data.length > 0 ? `${getIncomeSinceStart(t1Data[0][1], t1Data[t1Data.length - 1][1]).toFixed(4)} % `: '0 %'}</p>
+                    <p className={`card-right-content size-30 ${getNumberColor(t1Data.length > 0 ? getIncomeSinceStart(t1Data[0][1], t1Data[t1Data.length - 1][1]).toFixed(4) : 0)}`}>{t1Data.length > 0 ? `${getNumberFormat(getIncomeSinceStart(t1Data[0][1], t1Data[t1Data.length - 1][1]).toFixed(4))} % `: '0 %'}</p>
                   </Col>
                   <Col xs={12}>
                     <p className="card-right-title">最新净值 ({t1Data.length > 0 ? dayjs(t1Data[t1Data.length - 1][0] * 1000).format('MM-DD') : '--'}）</p>
@@ -206,15 +203,15 @@ const HomeComponent = ({className}) => {
                 <Row>
                   <Col xs={8}>
                     <p className="card-right-title">24H涨跌</p>
-                    <p className={cn('card-right-content', isUp(getIncomeByTimes(1)) ? 'green' : 'red')}>{getIncomeByTimes(1).toFixed(4)} %</p>
+                    <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(1)))}>{getNumberFormat(getIncomeByTimes(1).toFixed(4))} %</p>
                   </Col>
                   <Col xs={8}>
                   <p className="card-right-title">近1月涨跌</p>
-                  <p className={cn('card-right-content', isUp(getIncomeByTimes(30)) ? 'green' : 'red')}>{getIncomeByTimes(30).toFixed(4)} %</p>
+                  <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(30)))}>{getNumberFormat(getIncomeByTimes(30).toFixed(4))} %</p>
                   </Col>
                   <Col xs={8}>
                   <p className="card-right-title">近3月涨跌</p>
-                  <p className={cn('card-right-content', isUp(getIncomeByTimes(90)) ? 'green' : 'red')}>{getIncomeByTimes(90).toFixed(4)} %</p>
+                  <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(90)))}>{getNumberFormat(getIncomeByTimes(90).toFixed(4))} %</p>
                   </Col>
                 </Row>
                 <Row>
