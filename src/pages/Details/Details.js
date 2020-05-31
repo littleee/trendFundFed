@@ -156,6 +156,7 @@ export const DetailsComponent = ({className}) => {
       title: '净值',
       dataIndex: 'value',
       key: 'value',
+      render: text => text.toFixed(4)
     },
     {
       title: '日涨幅',
