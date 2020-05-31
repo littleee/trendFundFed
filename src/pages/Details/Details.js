@@ -342,7 +342,7 @@ export const DetailsComponent = ({className}) => {
           </Col>
           <Col xs={12}>
             <p className="card-right-title">持仓成本</p>
-            <p className={cn('card-right-content')}><span className="size-30">{getLastestDataCost(personData)}</span> <span className="grey">USD</span></p>
+            <p className={cn('card-right-content')}><span className="size-30">{getLastestDataCost(personData).toFixed(4)}</span> <span className="grey">USD</span></p>
           </Col>
         </Row>
         <Table columns={columns} dataSource={dataSource(getDataWith8Hour)(personData)} />
@@ -459,7 +459,7 @@ export const Details = styled(DetailsComponent)`
   color:rgba(214,85,55,1);
 }
 .size-30 {
-  font-size: 28px;
+  font-size: 25px;
 }
 .grey {
   color:rgba(19,24,31, 0.6);

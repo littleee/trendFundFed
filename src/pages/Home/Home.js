@@ -361,7 +361,7 @@ const HomeComponent = ({className}) => {
     color:rgba(214,85,55,1);
   }
   .size-30 {
-    font-size: 30px;
+    font-size: 25px;
   }
   .grey {
     color:rgba(19,24,31, 0.6);
