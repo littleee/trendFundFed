@@ -14,3 +14,5 @@ export const getNumberFormat = value => {
   }
   return value
 }
+
+export const getDataByDayFormat = data => data.filter(x=>new Date(x[0]).getHours() === 8)
