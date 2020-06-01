@@ -156,7 +156,7 @@ export const DetailsComponent = ({className}) => {
       title: '净值',
       dataIndex: 'value',
       key: 'value',
-      render: text => text.toFixed(4)
+      render: text => text
     },
     {
       title: '日涨幅',
@@ -172,10 +172,10 @@ export const DetailsComponent = ({className}) => {
     const data = fn(x);
     if(data.length > 0){
       const result = data.reverse().reduce((acc, curr, index, arr) => {
-
+        console.log(123,index, curr[1]);
         const obj = {
           date: dayjs(curr[0] * 1000).format('YYYY-MM-DD'),
-          value: curr[1],
+          value: index === 0 ? '--' : arr[index-1][1].toFixed(4),
           cost: curr[2],
           share: curr[3].toFixed(0),
           key:curr[0],
