@@ -34,8 +34,8 @@ const HomeComponent = ({className}) => {
     setHandleData(handleBtc);
     const startPriceByT1 = t1[0][1];
     const startPriceByHandle = handleBtc[0][1]
-    const t1Income = t1.map(x=>[x[0] * 1000, ((x[1]/startPriceByT1 - 1) * 100).toFixed(4)]);
-    const handleIncome = handleBtc.map(x=>[x[0] * 1000, ((x[1]/startPriceByHandle - 1) * 100).toFixed(4)]);
+    const t1Income = t1.map(x=>[x[0] * 1000, ((x[1]/startPriceByT1 - 1) * 100).toFixed(2)]);
+    const handleIncome = handleBtc.map(x=>[x[0] * 1000, ((x[1]/startPriceByHandle - 1) * 100).toFixed(2)]);
     setT1Income(getDataByDayFormat(t1Income));
     setHandleIncome(getDataByDayFormat(handleIncome))
     setIsLoading(false)
@@ -191,7 +191,7 @@ const HomeComponent = ({className}) => {
                 <Row>
                   <Col xs={12}>
                     <p className="card-right-title">成立以来收益</p>
-                    <p className={`card-right-content size-30 ${getNumberColor(t1Data.length > 0 ? getIncomeSinceStart(t1Data[0][1], t1Data[t1Data.length - 1][1]).toFixed(4) : 0)}`}>{t1Data.length > 0 ? `${getNumberFormat(getIncomeSinceStart(t1Data[0][1], t1Data[t1Data.length - 1][1]).toFixed(4))}% `: '0%'}</p>
+                    <p className={`card-right-content size-30 ${getNumberColor(t1Data.length > 0 ? getIncomeSinceStart(t1Data[0][1], t1Data[t1Data.length - 1][1]).toFixed(2) : 0)}`}>{t1Data.length > 0 ? `${getNumberFormat(getIncomeSinceStart(t1Data[0][1], t1Data[t1Data.length - 1][1]).toFixed(2))}% `: '0%'}</p>
                   </Col>
                   <Col xs={12}>
                     <p className="card-right-title">最新净值 ({t1Data.length > 0 ? dayjs(t1Data[t1Data.length - 1][0] * 1000).format('MM-DD') : '--'}）</p>
@@ -201,15 +201,15 @@ const HomeComponent = ({className}) => {
                 <Row>
                   <Col xs={8}>
                     <p className="card-right-title">24H涨跌</p>
-                    <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(1)))}>{getNumberFormat(getIncomeByTimes(1).toFixed(4))}%</p>
+                    <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(1)))}>{getNumberFormat(getIncomeByTimes(1).toFixed(2))}%</p>
                   </Col>
                   <Col xs={8}>
                   <p className="card-right-title">近1月涨跌</p>
-                  <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(30)))}>{getNumberFormat(getIncomeByTimes(30).toFixed(4))}%</p>
+                  <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(30)))}>{getNumberFormat(getIncomeByTimes(30).toFixed(2))}%</p>
                   </Col>
                   <Col xs={8}>
                   <p className="card-right-title">近3月涨跌</p>
-                  <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(90)))}>{getNumberFormat(getIncomeByTimes(90).toFixed(4))}%</p>
+                  <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(90)))}>{getNumberFormat(getIncomeByTimes(90).toFixed(2))}%</p>
                   </Col>
                 </Row>
                 <Row>

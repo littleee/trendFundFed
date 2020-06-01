@@ -34,8 +34,8 @@ export const DetailsComponent = ({className}) => {
     setHandleData(handleBtc);
     const startPriceByT1 = t1[0][1];
     const startPriceByHandle = handleBtc[0][1]
-    const t1Income = t1.map(x=>[x[0] * 1000, ((x[1]/startPriceByT1 - 1) * 100).toFixed(4)]);
-    const handleIncome = handleBtc.map(x=>[x[0] * 1000, ((x[1]/startPriceByHandle - 1) * 100).toFixed(4)]);
+    const t1Income = t1.map(x=>[x[0] * 1000, ((x[1]/startPriceByT1 - 1) * 100).toFixed(2)]);
+    const handleIncome = handleBtc.map(x=>[x[0] * 1000, ((x[1]/startPriceByHandle - 1) * 100).toFixed(2)]);
     setT1Income(getDataByDayFormat(t1Income));
     setHandleIncome(getDataByDayFormat(handleIncome))
     setIsLoading(false);
@@ -179,7 +179,7 @@ export const DetailsComponent = ({className}) => {
           cost: curr[2],
           share: curr[3].toFixed(0),
           key:curr[0],
-          incomeRate: index !== 0 ? `${((arr[index - 1][1] / curr[1] - 1) * 100).toFixed(4)}` : '--',
+          incomeRate: index !== 0 ? `${((arr[index - 1][1] / curr[1] - 1) * 100).toFixed(2)}` : '--',
           incomeValue: index !== 0 ? `${(arr[index - 1][1] * arr[index - 1][3] - curr[1] * curr[3]).toFixed(1)}` : '--',
         }
         return [...acc, obj]
@@ -271,7 +271,7 @@ export const DetailsComponent = ({className}) => {
             <Row className="p-24">
               <Col sm={8} xs={12}>
                 <p className="card-right-title">成立以来收益</p>
-                <p className="card-right-content green size-30">{`${getNumberFormat((getIncomeRate(t1Data) * 100).toFixed(4))}% `}</p>
+                <p className="card-right-content green size-30">{`${getNumberFormat((getIncomeRate(t1Data) * 100).toFixed(2))}% `}</p>
               </Col>
               <Col sm={8} xs={12}>
                 <p className="card-right-title">最新净值（{t1Data.length > 0 ? dayjs(t1Data[t1Data.length - 1][0] * 1000).format('MM-DD') : '--'}）</p>
@@ -279,7 +279,7 @@ export const DetailsComponent = ({className}) => {
               </Col>
               <Col sm={8} xs={24}>
                 <p className="card-right-title">24H涨跌</p>
-                <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(1)))}><span className="size-30">{getNumberFormat(getIncomeByTimes(1).toFixed(4))}%</span></p>
+                <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(1)))}><span className="size-30">{getNumberFormat(getIncomeByTimes(1).toFixed(2))}%</span></p>
               </Col>
             </Row>
             <Row>
@@ -295,11 +295,11 @@ export const DetailsComponent = ({className}) => {
             <Row className="p-24">
               <Col sm={6}  xs={12}>
               <p className="card-right-title">近1月涨跌</p>
-              <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(30)))}>{getNumberFormat(getIncomeByTimes(30).toFixed(4))}%</p>
+              <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(30)))}>{getNumberFormat(getIncomeByTimes(30).toFixed(2))}%</p>
               </Col>
               <Col sm={6} xs={12}>
               <p className="card-right-title">近3月涨跌</p>
-              <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(90)))}>{getNumberFormat(getIncomeByTimes(90).toFixed(4))}%</p>
+              <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(90)))}>{getNumberFormat(getIncomeByTimes(90).toFixed(2))}%</p>
               </Col>
               <Col sm={6} xs={12}>
                 <p className="card-right-title">运行天数</p>
@@ -335,7 +335,7 @@ export const DetailsComponent = ({className}) => {
           </Col>
           <Col xs={12}>
             <p className="card-right-title">持仓收益</p>
-            <p className={cn('card-right-content', getNumberColor(getIncomeRate(personData)))}><span className="size-30">{`${getNumberFormat((getIncomeRate(personData) * 100).toFixed(4))}% `}</span></p>
+            <p className={cn('card-right-content', getNumberColor(getIncomeRate(personData)))}><span className="size-30">{`${getNumberFormat((getIncomeRate(personData) * 100).toFixed(2))}% `}</span></p>
           </Col>
           <Col xs={12}>
             <p className="card-right-title">持仓份额</p>
