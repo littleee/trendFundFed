@@ -134,7 +134,8 @@ export const DetailsComponent = ({className}) => {
       key: 'marketValue',
       render: (text, row, index) => {
         const { value, share } = row
-        return (value * share).toFixed(1)
+        const result = value * share;
+        return isNaN(result) ? '--' : result.toFixed(1)
       }
     },
     {
@@ -172,7 +173,6 @@ export const DetailsComponent = ({className}) => {
     const data = fn(x);
     if(data.length > 0){
       const result = data.reverse().reduce((acc, curr, index, arr) => {
-        console.log(123,index, curr[1]);
         const obj = {
           date: dayjs(curr[0] * 1000).format('YYYY-MM-DD'),
           value: index === 0 ? '--' : arr[index-1][1].toFixed(4),
@@ -330,8 +330,8 @@ export const DetailsComponent = ({className}) => {
         </Row>
         <Row className="p-24">
           <Col xs={12}>
-            <p className="card-right-title">持仓市值</p>
-            <p className="card-right-content"><span className="size-30">{getLastestDataHandleValue(personData).toFixed(0)}</span> <span className="grey">USD</span></p>
+            <p className="card-right-title">持仓市值（USD）</p>
+            <p className="card-right-content"><span className="size-30">{getLastestDataHandleValue(personData).toFixed(0)}</span></p>
           </Col>
           <Col xs={12}>
             <p className="card-right-title">持仓收益</p>
@@ -342,8 +342,8 @@ export const DetailsComponent = ({className}) => {
             <p className={cn('card-right-content')}><span className="size-30">{getLastestDataShare(personData).toFixed(0)}</span></p>
           </Col>
           <Col xs={12}>
-            <p className="card-right-title">持仓成本</p>
-            <p className={cn('card-right-content')}><span className="size-30">{getLastestDataCost(personData).toFixed(4)}</span> <span className="grey">USD</span></p>
+            <p className="card-right-title">持仓成本(USD)</p>
+            <p className={cn('card-right-content')}><span className="size-30">{getLastestDataCost(personData).toFixed(4)}</span></p>
           </Col>
         </Row>
         <Table columns={columns} dataSource={dataSource(getDataWith8Hour)(personData)} />
