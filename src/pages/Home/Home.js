@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import footerIcon from './footer.png';
 import bannerIcon from './banner.png';
 import { Layout, Row, Divider, Card, Typography, Col } from 'antd';
-import { BannerAnimation } from '../../components/BannerAnimation';
 import { LineChart } from '../../components/LineChart';
 import axios from 'axios';
 import echarts from 'echarts'
@@ -122,12 +121,6 @@ const HomeComponent = ({className}) => {
           },
       ]
   };
-
-  const getIncomeSinceStart = (start, end) => {
-    const income = (end / start - 1) * 100;
-
-    return income
-  }
 
   return (
     <Layout className={className}>

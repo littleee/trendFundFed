@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Layout, Row, Divider, Card, Typography, Col, Table } from 'antd';
-import { BannerAnimation } from '../../components/BannerAnimation';
 import { LineChart } from '../../components/LineChart';
 import axios from 'axios';
 import echarts from 'echarts'
@@ -10,8 +9,8 @@ import styled from "styled-components";
 import dayjs from 'dayjs';
 import { getNumberColor, getNumberFormat, getDataByDayFormat, getRunDays, getIncomeRate } from '../../utils';
 
-const { Title, Text } = Typography;
-const { Content, Footer } = Layout;
+const { Text } = Typography;
+const { Content } = Layout;
 
 export const DetailsComponent = ({className}) => {
   const [t1Income, setT1Income] = useState([]);
@@ -19,20 +18,27 @@ export const DetailsComponent = ({className}) => {
   const [t1Data, setT1Data] = useState([]);
   const [handleData, setHandleData] = useState([]);
   const [personData, setPersonData] = useState([]);
+  const [dw, setDw] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useParams();
 
   useEffect(()=> {
     const fetchCharts = async () => {
-    const [{data: t1}, {data:handleBtc}, {data: person}] = await Promise.all([
+    const [{data: t1}, {data:handleBtc}, {data: person}, {data: dwData}] = await Promise.all([
       axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/t1/main.json`),
       axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`),
-      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${user}/main.json`)
+      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${user}/main.json`),
+      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${user}/dw.json`)
     ]);
     setT1Data(t1);
     setPersonData(person);
     setHandleData(handleBtc);
-    const startPriceByT1 = t1[0][1];
+    setDw(dwData.reverse().map((item,i) => {
+      return {
+        ...item,
+        key: i
+      }
+    }))
     const startPriceByHandle = handleBtc[0][1]
     const t1Income = t1.map(x=>[x[0] * 1000, ((x[1]/x[2] - 1) * 100).toFixed(2)]);
     const handleIncome = handleBtc.map(x=>[x[0] * 1000, ((x[1]/startPriceByHandle - 1) * 100).toFixed(2)]);
@@ -147,6 +153,25 @@ export const DetailsComponent = ({className}) => {
       }
     }
   ]
+
+  const columnsExchangeDetails = [
+    {
+      title: '日期',
+      dataIndex: 'datetime',
+      key: 'datetime',
+    },
+    {
+      title: '金额',
+      dataIndex: 'Value',
+      key: 'Value',
+      render: (text, row, index) => {
+        const { price, amount } = row
+        const result = Number(price) * Number(amount);
+        return <span className={getNumberColor(result)}>{isNaN(result) ? '--' : getNumberFormat(result.toFixed(2))}</span>
+      }
+    }
+  ]
+
   const columnsT1 = [
     {
       title: '日期',
@@ -169,8 +194,7 @@ export const DetailsComponent = ({className}) => {
     },
   ]
 
-  const dataSource = fn => x => {
-    const data = fn(x);
+  const dataSource = data => {
     if(data.length > 0){
       const result = data.reverse().reduce((acc, curr, index, arr) => {
         const obj = {
@@ -190,35 +214,9 @@ export const DetailsComponent = ({className}) => {
     }
   }
 
-  const getIncomeSinceStart = (start, end) => {
-    const income = (end / start - 1) * 100;
-
-    return income
-  }
-
-  const getPersonIncomeByTimes = (days) => {
-    const timeByDays = 24 * 60 * 60 * days
-    if(t1Income.length > 0){
-      const currentTime = personData[personData.length - 1][0];
-      const startTime = currentTime - timeByDays;
-      if(personData.filter(x => x[0] === startTime).length === 0){
-        return personData.length > 0 ? getIncomeSinceStart(personData[0][1], personData[personData.length - 1][1]) : 0
-      } else {
-        const end = personData.find(x => x[0] === currentTime)[1];
-        const start = personData.find(x => x[0] === startTime)[1];
-        return getIncomeSinceStart(start, end)
-      }
-    }
-    return 0
-  }
-
   const getLastestDataHandleValue = (data) => {
     const len = data.length;
     return len > 0 ? data[len-1][1] * data[len-1][3] : 0
-  }
-  const getLastestDataValue = (data) => {
-    const len = data.length;
-    return len > 0 ? data[len-1][1] : 0
   }
   const getLastestDataCost = (data) => {
     const len = data.length;
@@ -229,7 +227,6 @@ export const DetailsComponent = ({className}) => {
     return len > 0 ? data[len-1][3] : 0
   }
 
-  const getDataWith8Hour = (data) => data.length > 0 ? data.filter(x => new Date(x[0] * 1000).getHours() === 8) : []
   return (
     <Layout className={className}>
       <Divider className="divider"/>
@@ -293,7 +290,7 @@ export const DetailsComponent = ({className}) => {
               <Text className="card-title">历史净值</Text>
               </div>
             </Row>
-            <Table columns={columnsT1} dataSource={dataSource(getDataWith8Hour)(t1Data)} />
+            <Table columns={columnsT1} dataSource={dataSource(t1Data)} />
           </Card>
         </Col>
         <Col sm={8} xs={24} className="content-right">
@@ -321,7 +318,9 @@ export const DetailsComponent = ({className}) => {
             <p className={cn('card-right-content')}><span className="size-30">{getLastestDataCost(personData).toFixed(4)}</span></p>
           </Col>
         </Row>
-        <Table columns={columns} dataSource={dataSource(getDataWith8Hour)(personData)} />
+        <Table columns={columns} dataSource={dataSource(personData)} />
+        <p><b>交易明细</b></p>
+        <Table columns={columnsExchangeDetails} dataSource={dw} />
         </Card>
         </Col>
         </Row>
