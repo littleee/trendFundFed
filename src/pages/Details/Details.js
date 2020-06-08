@@ -25,16 +25,16 @@ export const DetailsComponent = ({className}) => {
   useEffect(()=> {
     const fetchCharts = async () => {
     const [{data: t1}, {data:handleBtc}, {data: person}] = await Promise.all([
-      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/t1.json`),
+      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/t1/main.json`),
       axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`),
-      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${user}.json`)
+      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${user}/main.json`)
     ]);
     setT1Data(t1);
     setPersonData(person);
     setHandleData(handleBtc);
     const startPriceByT1 = t1[0][1];
     const startPriceByHandle = handleBtc[0][1]
-    const t1Income = t1.map(x=>[x[0] * 1000, ((x[1]/startPriceByT1 - 1) * 100).toFixed(2)]);
+    const t1Income = t1.map(x=>[x[0] * 1000, ((x[1]/x[2] - 1) * 100).toFixed(2)]);
     const handleIncome = handleBtc.map(x=>[x[0] * 1000, ((x[1]/startPriceByHandle - 1) * 100).toFixed(2)]);
     setT1Income(getDataByDayFormat(t1Income));
     setHandleIncome(getDataByDayFormat(handleIncome))
@@ -252,7 +252,7 @@ export const DetailsComponent = ({className}) => {
     const len = data.length;
     return len > 0 ? data[len-1][3] : 0
   }
-  const getIncomeRate = data => data.length > 0 ? (t1Data[t1Data.length -1][1] / t1Data[t1Data.length -1][2] - 1) : 0
+  const getIncomeRate = data => data.length > 0 ? (data[data.length -1][1] / data[data.length -1][2] - 1) : 0
 
   const getDataWith8Hour = (data) => data.length > 0 ? data.filter(x => new Date(x[0] * 1000).getHours() === 8) : []
   return (

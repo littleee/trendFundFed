@@ -27,7 +27,7 @@ const HomeComponent = ({className}) => {
   useEffect(()=> {
     const fetchCharts = async () => {
     const [{data: t1}, {data:handleBtc}] = await Promise.all([
-      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/t1.json`),
+      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/t1/main.json`),
       axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`)
     ]);
     setT1Data(t1);
