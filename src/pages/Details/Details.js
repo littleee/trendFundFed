@@ -8,7 +8,7 @@ import cn from 'classnames'
 import { useParams } from 'react-router-dom';
 import styled from "styled-components";
 import dayjs from 'dayjs';
-import { getNumberColor, getNumberFormat, getDataByDayFormat } from '../../utils';
+import { getNumberColor, getNumberFormat, getDataByDayFormat, getRunDays, getIncomeRate } from '../../utils';
 
 const { Title, Text } = Typography;
 const { Content, Footer } = Layout;
@@ -180,7 +180,7 @@ export const DetailsComponent = ({className}) => {
           share: curr[3].toFixed(0),
           key:curr[0],
           incomeRate: index !== 0 ? `${((arr[index - 1][1] / curr[1] - 1) * 100).toFixed(2)}` : '--',
-          incomeValue: index !== 0 ? `${(arr[index - 1][1] * arr[index - 1][3] - curr[1] * curr[3]).toFixed(1)}` : '--',
+          incomeValue: index !== 0 ? `${(arr[index - 1][4] - curr[4]).toFixed(1)}` : '--',
         }
         return [...acc, obj]
       },[])
@@ -196,21 +196,6 @@ export const DetailsComponent = ({className}) => {
     return income
   }
 
-  const getIncomeByTimes = (days) => {
-    const timeByDays = 24 * 60 * 60 * days
-    if(t1Income.length > 0){
-      const currentTime = t1Data[t1Data.length - 1][0];
-      const startTime = currentTime - timeByDays;
-      if(t1Data.filter(x => x[0] === startTime).length === 0){
-        return t1Data.length > 0 ? getIncomeSinceStart(t1Data[0][1], t1Data[t1Data.length - 1][1]) : 0
-      } else {
-        const end = t1Data.find(x => x[0] === currentTime)[1];
-        const start = t1Data.find(x => x[0] === startTime)[1];
-        return getIncomeSinceStart(start, end)
-      }
-    }
-    return 0
-  }
   const getPersonIncomeByTimes = (days) => {
     const timeByDays = 24 * 60 * 60 * days
     if(t1Income.length > 0){
@@ -225,15 +210,6 @@ export const DetailsComponent = ({className}) => {
       }
     }
     return 0
-  }
-
-  const getRunDays = () => {
-    if(t1Data.length > 0){
-      const start = t1Data[0][0];
-      const end = t1Data[t1Data.length - 1][0]
-      const runDays = (end - start) / (24 * 60 * 60);
-      return Math.ceil(runDays)
-    }
   }
 
   const getLastestDataHandleValue = (data) => {
@@ -252,7 +228,6 @@ export const DetailsComponent = ({className}) => {
     const len = data.length;
     return len > 0 ? data[len-1][3] : 0
   }
-  const getIncomeRate = data => data.length > 0 ? (data[data.length -1][1] / data[data.length -1][2] - 1) : 0
 
   const getDataWith8Hour = (data) => data.length > 0 ? data.filter(x => new Date(x[0] * 1000).getHours() === 8) : []
   return (
@@ -271,15 +246,15 @@ export const DetailsComponent = ({className}) => {
             <Row className="p-24">
               <Col sm={8} xs={12}>
                 <p className="card-right-title">成立以来收益</p>
-                <p className="card-right-content green size-30">{`${getNumberFormat((getIncomeRate(t1Data) * 100).toFixed(2))}% `}</p>
+                <p className="card-right-content green size-30">{`${getNumberFormat((getIncomeRate(t1Data)).toFixed(2))}% `}</p>
               </Col>
               <Col sm={8} xs={12}>
                 <p className="card-right-title">最新净值（{t1Data.length > 0 ? dayjs(t1Data[t1Data.length - 1][0] * 1000).format('MM-DD') : '--'}）</p>
                 <p className="card-right-content"><span className="size-30">{t1Data.length > 0  && t1Data[t1Data.length - 1][1].toFixed(4)}</span> <span className="grey">USD</span></p>
               </Col>
               <Col sm={8} xs={24}>
-                <p className="card-right-title">24H涨跌</p>
-                <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(1)))}><span className="size-30">{getNumberFormat(getIncomeByTimes(1).toFixed(2))}%</span></p>
+                <p className="card-right-title">昨日涨跌</p>
+                <p className={cn('card-right-content', getNumberColor(getIncomeRate(t1Data, 1)))}><span className="size-30">{getNumberFormat(getIncomeRate(t1Data, 1).toFixed(2))}%</span></p>
               </Col>
             </Row>
             <Row>
@@ -295,15 +270,15 @@ export const DetailsComponent = ({className}) => {
             <Row className="p-24">
               <Col sm={6}  xs={12}>
               <p className="card-right-title">近1月涨跌</p>
-              <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(30)))}>{getNumberFormat(getIncomeByTimes(30).toFixed(2))}%</p>
+              <p className={cn('card-right-content', getNumberColor(getIncomeRate(t1Data, 30)))}>{getNumberFormat(getIncomeRate(t1Data, 30).toFixed(2))}%</p>
               </Col>
               <Col sm={6} xs={12}>
               <p className="card-right-title">近3月涨跌</p>
-              <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(90)))}>{getNumberFormat(getIncomeByTimes(90).toFixed(2))}%</p>
+              <p className={cn('card-right-content', getNumberColor(getIncomeRate(t1Data, 90)))}>{getNumberFormat(getIncomeRate(t1Data, 90).toFixed(2))}%</p>
               </Col>
               <Col sm={6} xs={12}>
                 <p className="card-right-title">运行天数</p>
-                <p className="card-right-content">{getRunDays()}</p>
+                <p className="card-right-content">{getRunDays(t1Data)}</p>
               </Col>
               <Col sm={6} x={12}>
                 <p className="card-right-title">交易标的</p>
@@ -335,7 +310,7 @@ export const DetailsComponent = ({className}) => {
           </Col>
           <Col xs={12}>
             <p className="card-right-title">持仓收益</p>
-            <p className={cn('card-right-content', getNumberColor(getIncomeRate(personData)))}><span className="size-30">{`${getNumberFormat((getIncomeRate(personData) * 100).toFixed(2))}% `}</span></p>
+            <p className={cn('card-right-content', getNumberColor(getIncomeRate(personData)))}><span className="size-30">{`${getNumberFormat((getIncomeRate(personData)).toFixed(2))}% `}</span></p>
           </Col>
           <Col xs={12}>
             <p className="card-right-title">持仓份额</p>

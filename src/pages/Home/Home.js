@@ -10,7 +10,7 @@ import cn from 'classnames'
 import styled from "styled-components";
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import { getNumberColor, getNumberFormat, getDataByDayFormat } from '../../utils';
+import { getNumberColor, getNumberFormat, getDataByDayFormat, getRunDays, getIncomeRate } from '../../utils';
 
 const { Text } = Typography;
 const { Content, Footer } = Layout;
@@ -129,31 +129,6 @@ const HomeComponent = ({className}) => {
     return income
   }
 
-  const getIncomeByTimes = (days) => {
-    const timeByDays = 24 * 60 * 60 * days
-    if(t1Income.length > 0){
-      const currentTime = t1Data[t1Data.length - 1][0];
-      const startTime = currentTime - timeByDays;
-      if(t1Data.filter(x => x[0] === startTime).length === 0){
-        return t1Data.length > 0 ? getIncomeSinceStart(t1Data[0][1], t1Data[t1Data.length - 1][1]) : 0
-      } else {
-        const end = t1Data.find(x => x[0] === currentTime)[1];
-        const start = t1Data.find(x => x[0] === startTime)[1];
-        return getIncomeSinceStart(start, end)
-      }
-    }
-    return 0
-  }
-
-  const getRunDays = () => {
-    if(t1Data.length > 0){
-      const start = t1Data[0][0];
-      const end = t1Data[t1Data.length - 1][0]
-      const runDays = (end - start) / (24 * 60 * 60);
-      return Math.ceil(runDays)
-    }
-    return  '--'
-  }
   return (
     <Layout className={className}>
       <Divider className="divider"/>
@@ -191,7 +166,7 @@ const HomeComponent = ({className}) => {
                 <Row>
                   <Col xs={12}>
                     <p className="card-right-title">成立以来收益</p>
-                    <p className={`card-right-content size-30 ${getNumberColor(t1Data.length > 0 ? getIncomeSinceStart(t1Data[0][1], t1Data[t1Data.length - 1][1]).toFixed(2) : 0)}`}>{t1Data.length > 0 ? `${getNumberFormat(getIncomeSinceStart(t1Data[0][1], t1Data[t1Data.length - 1][1]).toFixed(2))}% `: '0%'}</p>
+                    <p className={`card-right-content size-30 ${getNumberColor(getIncomeRate(t1Data).toFixed(2))}`}>{ `${getNumberFormat(getIncomeRate(t1Data).toFixed(2))}% `}</p>
                   </Col>
                   <Col xs={12}>
                     <p className="card-right-title">最新净值 ({t1Data.length > 0 ? dayjs(t1Data[t1Data.length - 1][0] * 1000).format('MM-DD') : '--'}）</p>
@@ -200,22 +175,22 @@ const HomeComponent = ({className}) => {
                 </Row>
                 <Row>
                   <Col xs={8}>
-                    <p className="card-right-title">24H涨跌</p>
-                    <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(1)))}>{getNumberFormat(getIncomeByTimes(1).toFixed(2))}%</p>
+                    <p className="card-right-title">昨日涨跌</p>
+                    <p className={cn('card-right-content', getNumberColor(getIncomeRate(t1Data, 1)))}>{getNumberFormat(getIncomeRate(t1Data,1).toFixed(2))}%</p>
                   </Col>
                   <Col xs={8}>
                   <p className="card-right-title">近1月涨跌</p>
-                  <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(30)))}>{getNumberFormat(getIncomeByTimes(30).toFixed(2))}%</p>
+                  <p className={cn('card-right-content', getNumberColor(getIncomeRate(t1Data,30)))}>{getNumberFormat(getIncomeRate(t1Data,30).toFixed(2))}%</p>
                   </Col>
                   <Col xs={8}>
                   <p className="card-right-title">近3月涨跌</p>
-                  <p className={cn('card-right-content', getNumberColor(getIncomeByTimes(90)))}>{getNumberFormat(getIncomeByTimes(90).toFixed(2))}%</p>
+                  <p className={cn('card-right-content', getNumberColor(getIncomeRate(t1Data,90)))}>{getNumberFormat(getIncomeRate(t1Data,90).toFixed(2))}%</p>
                   </Col>
                 </Row>
                 <Row>
                   <Col xs={8}>
                     <p className="card-right-title">运行天数</p>
-                    <p className="card-right-content">{getRunDays()}</p>
+                    <p className="card-right-content">{getRunDays(t1Data)}</p>
                   </Col>
                   <Col xs={16}>
                     <p className="card-right-title">交易标的</p>
