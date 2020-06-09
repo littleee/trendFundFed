@@ -134,8 +134,8 @@ const HomeComponent = ({className}) => {
         <Row className="content">
           <Card className="card">
             <Row className="card-title-wrapper">
-              <Col sm={4} xs={24}><Text className="card-title">T1 趋势跟踪策略</Text></Col>
-              <Col sm={20} xs={24} style={{textAlign: 'right'}}>
+              <Col sm={4} xs={12}><Text className="card-title">T1 趋势跟踪策略</Text></Col>
+              <Col sm={20} xs={12} style={{textAlign: 'right'}}>
                 <Tag color="green">运行中</Tag>
               </Col>
               <div>

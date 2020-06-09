@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import './App.css';
 import { Home } from '../Home';
 import { Details } from '../Details';
+import { T1 } from '../T1';
 import logo from './logo.png';
 import { Layout } from 'antd';
 import {
@@ -21,7 +22,8 @@ function App() {
       </Header>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/:user" element={<Details />} />
+          <Route path="/T1" exact element={<T1 />} />
+          <Route path="/person/:user" element={<Details />} />
         </Routes>
     </Suspense>
     </div>

@@ -43,3 +43,8 @@ export const getIncomeRate = (data, days) => {
   }
   return 0
 }
+
+export const getNumberWithDecimal = (number=0, decimal=0) => {
+  const multiplier = Math.pow(10, decimal);
+  return Math.floor(Number(number)*multiplier)/multiplier
+}

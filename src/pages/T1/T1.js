@@ -12,7 +12,7 @@ import { Statistic, LineChart } from '../../components';
 const { Text } = Typography;
 const { Content } = Layout;
 
-export const DetailsComponent = ({className}) => {
+export const T1Component = ({className}) => {
   const [t1Income, setT1Income] = useState([]);
   const [handleIncome, setHandleIncome] = useState([]);
   const [t1Data, setT1Data] = useState([]);
@@ -27,8 +27,8 @@ export const DetailsComponent = ({className}) => {
     const [{data: t1}, {data:handleBtc}, {data: person}, {data: dwData}] = await Promise.all([
       axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/t1/main.json`),
       axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`),
-      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${user}/main.json`),
-      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${user}/dw.json`)
+      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/t1/main.json`),
+      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/t1/dw.json`)
     ]);
     setT1Data(t1);
     setPersonData(person);
@@ -234,8 +234,8 @@ export const DetailsComponent = ({className}) => {
     <Layout className={className}>
       <Divider className="divider"/>
       <Content>
-        <Row className="content" gutter={16}>
-        <Col sm={16} xs={24} className="content-left">
+        <Row className="content" gutter={24}>
+        <Col sm={24} xs={24} className="content-left">
           <Card className="card">
           <Row className="card-title-wrapper">
             <Col sm={6} xs={12}><Text className="card-title">T1 趋势跟踪策略</Text></Col>
@@ -320,50 +320,6 @@ export const DetailsComponent = ({className}) => {
             <Table columns={columnsT1} dataSource={dataSource([...t1Data].reverse())} />
           </Card>
         </Col>
-        <Col sm={8} xs={24} className="content-right">
-        <Card className="card m-b-24" >
-        <Row className="card-title-wrapper">
-          <div className="title-wrapper-left">
-          <Text className="card-title">{user} 的持仓</Text>
-          </div>
-        </Row>
-        <Row className="p-24">
-          <Col xs={12}>
-            <Statistic
-              title='持仓市值（USD）'
-              value={getLastestDataHandleValue(personData)}
-              precision={0}
-            />
-          </Col>
-          <Col xs={12}>
-            <Statistic
-              title='持仓收益'
-              value={personIncomeRate}
-              precision={2}
-              suffix='%'
-              isNormal={false}
-            />
-          </Col>
-          <Col xs={12}>
-            <Statistic
-              title='持仓份额'
-              value={getLastestDataShare(personData)}
-              precision={0}
-            />
-          </Col>
-          <Col xs={12}>
-            <Statistic
-              title='持仓成本(USD)'
-              value={getLastestDataCost(personData)}
-              precision={4}
-            />
-          </Col>
-        </Row>
-        <Table columns={columns} dataSource={dataSource([...personData].reverse())} />
-        <p><b>交易明细</b></p>
-        <Table columns={columnsExchangeDetails} dataSource={dw} />
-        </Card>
-        </Col>
         </Row>
 
       </Content>
@@ -371,7 +327,7 @@ export const DetailsComponent = ({className}) => {
   )
 }
 
-export const Details = styled(DetailsComponent)`
+export const T1 = styled(T1Component)`
 .p-24 {
   padding: 24px;
 }
