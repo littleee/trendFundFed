@@ -32,8 +32,8 @@ const HomeComponent = ({className}) => {
     setHandleData(handleBtc);
     const startPriceByT1 = t1[0][1];
     const startPriceByHandle = handleBtc[0][1]
-    const t1Income = t1.map(x=>[x[0] * 1000, Math.floor((x[1]/startPriceByT1 - 1) * 10000)/100]);
-    const handleIncome = handleBtc.map(x=>[x[0] * 1000, Math.floor((x[1]/startPriceByHandle - 1) * 10000)/100]);
+    const t1Income = t1.map(x=>[x[0] * 1000 - 24 * 60 * 60 * 1000, Math.floor((x[1]/startPriceByT1 - 1) * 10000)/100]);
+    const handleIncome = handleBtc.map(x=>[x[0] * 1000 - 24 * 60 * 60 * 1000, Math.floor((x[1]/startPriceByHandle - 1) * 10000)/100]);
     setT1Income(getDataByDayFormat(t1Income));
     setHandleIncome(getDataByDayFormat(handleIncome))
     setIsLoading(false)
