@@ -33,7 +33,7 @@ export const DetailsComponent = ({className}) => {
     setT1Data(t1);
     setPersonData(person);
     setHandleData(handleBtc);
-    setDw(dwData.reverse().map((item,i) => {
+    setDw([...dwData].reverse().map((item,i) => {
       return {
         ...item,
         key: i
@@ -196,7 +196,7 @@ export const DetailsComponent = ({className}) => {
 
   const dataSource = data => {
     if(data.length > 0){
-      const result = data.reverse().reduce((acc, curr, index, arr) => {
+      const result = data.reduce((acc, curr, index, arr) => {
         const obj = {
           date: dayjs(curr[0] * 1000).format('YYYY-MM-DD'),
           value: index === 0 ? '--' : arr[index-1][1].toFixed(4),
@@ -290,7 +290,7 @@ export const DetailsComponent = ({className}) => {
               <Text className="card-title">历史净值</Text>
               </div>
             </Row>
-            <Table columns={columnsT1} dataSource={dataSource(t1Data)} />
+            <Table columns={columnsT1} dataSource={dataSource([...t1Data].reverse())} />
           </Card>
         </Col>
         <Col sm={8} xs={24} className="content-right">
@@ -318,7 +318,7 @@ export const DetailsComponent = ({className}) => {
             <p className={cn('card-right-content')}><span className="size-30">{getLastestDataCost(personData).toFixed(4)}</span></p>
           </Col>
         </Row>
-        <Table columns={columns} dataSource={dataSource(personData)} />
+        <Table columns={columns} dataSource={dataSource([...personData].reverse())} />
         <p><b>交易明细</b></p>
         <Table columns={columnsExchangeDetails} dataSource={dw} />
         </Card>
