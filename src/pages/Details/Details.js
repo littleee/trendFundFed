@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Row, Divider, Card, Typography, Col, Table } from 'antd';
-import { LineChart } from '../../components/LineChart';
+import { Layout, Row, Divider, Card, Typography, Col, Table, Tag } from 'antd';
 import axios from 'axios';
 import echarts from 'echarts'
 import cn from 'classnames'
 import { useParams } from 'react-router-dom';
 import styled from "styled-components";
 import dayjs from 'dayjs';
-import { getNumberColor, getNumberFormat, getDataByDayFormat, getRunDays, getIncomeRate } from '../../utils';
+import { getNumberColor, getNumberFormat, getDataByDayFormat, getRunDays, getIncomeRate, isNumberGreaterThanZero } from '../../utils';
+import { Statistic, LineChart } from '../../components';
 
 const { Text } = Typography;
 const { Content } = Layout;
@@ -227,6 +227,9 @@ export const DetailsComponent = ({className}) => {
     return len > 0 ? data[len-1][3] : 0
   }
 
+  const t1IncomeRate = getIncomeRate(t1Data);
+  const personIncomeRate = getIncomeRate(personData);
+
   return (
     <Layout className={className}>
       <Divider className="divider"/>
@@ -237,21 +240,29 @@ export const DetailsComponent = ({className}) => {
           <Row className="card-title-wrapper">
             <Col sm={6} xs={24}><Text className="card-title">T1 趋势跟踪策略</Text></Col>
             <Col sm={18} xs={24} style={{textAlign: 'right'}}>
-              <Text className="card-subtitle">运行中</Text>
+              <Tag color="green">运行中</Tag>
             </Col>
           </Row>
             <Row className="p-24">
               <Col sm={8} xs={12}>
-                <p className="card-right-title">成立以来收益</p>
-                <p className="card-right-content green size-30">{`${getNumberFormat((getIncomeRate(t1Data)).toFixed(2))}% `}</p>
+                 <Statistic title="成立以来收益" value={t1IncomeRate} precision={2} suffix='%' isNormal={false}/>
               </Col>
               <Col sm={8} xs={12}>
-                <p className="card-right-title">最新净值（{t1Data.length > 0 ? dayjs(t1Data[t1Data.length - 1][0] * 1000).format('MM-DD') : '--'}）</p>
-                <p className="card-right-content"><span className="size-30">{t1Data.length > 0  && t1Data[t1Data.length - 1][1].toFixed(4)}</span> <span className="grey">USD</span></p>
+                <Statistic
+                  title={`最新净值（${t1Data.length > 0 ? dayjs(t1Data[t1Data.length - 1][0] * 1000).format('MM-DD') : '--'}）`}
+                  value={t1Data.length > 0 ? t1Data[t1Data.length - 1][1] : 0}
+                  precision={4}
+                  suffix='USD'
+                />
               </Col>
               <Col sm={8} xs={24}>
-                <p className="card-right-title">昨日涨跌</p>
-                <p className={cn('card-right-content', getNumberColor(getIncomeRate(t1Data, 1)))}><span className="size-30">{getNumberFormat(getIncomeRate(t1Data, 1).toFixed(2))}%</span></p>
+                <Statistic
+                  title='昨日涨跌'
+                  value={getIncomeRate(t1Data, 1)}
+                  precision={2}
+                  suffix='%'
+                  isNormal={false}
+                />
               </Col>
             </Row>
             <Row>
@@ -266,20 +277,36 @@ export const DetailsComponent = ({className}) => {
             </Row>
             <Row className="p-24">
               <Col sm={6}  xs={12}>
-              <p className="card-right-title">近1月涨跌</p>
-              <p className={cn('card-right-content', getNumberColor(getIncomeRate(t1Data, 30)))}>{getNumberFormat(getIncomeRate(t1Data, 30).toFixed(2))}%</p>
+                <Statistic
+                  title='近1月涨跌'
+                  value={getIncomeRate(t1Data, 30)}
+                  precision={2}
+                  suffix='%'
+                  isNormal={false}
+                />
               </Col>
               <Col sm={6} xs={12}>
-              <p className="card-right-title">近3月涨跌</p>
-              <p className={cn('card-right-content', getNumberColor(getIncomeRate(t1Data, 90)))}>{getNumberFormat(getIncomeRate(t1Data, 90).toFixed(2))}%</p>
+              <Statistic
+                title='近3月涨跌'
+                value={getIncomeRate(t1Data, 90)}
+                precision={2}
+                suffix='%'
+                isNormal={false}
+              />
               </Col>
               <Col sm={6} xs={12}>
-                <p className="card-right-title">运行天数</p>
-                <p className="card-right-content">{getRunDays(t1Data)}</p>
+              <Statistic
+                title='运行天数'
+                value={getRunDays(t1Data)}
+                precision={0}
+              />
               </Col>
               <Col sm={6} x={12}>
-                <p className="card-right-title">交易标的</p>
-                <p className="card-right-content">BTCUSD 永续合约</p>
+              <Statistic
+                title='交易标的'
+                value='BTCUSD 永续合约'
+                precision={0}
+              />
               </Col>
             </Row>
           </Card>
@@ -302,20 +329,34 @@ export const DetailsComponent = ({className}) => {
         </Row>
         <Row className="p-24">
           <Col xs={12}>
-            <p className="card-right-title">持仓市值（USD）</p>
-            <p className="card-right-content"><span className="size-30">{getLastestDataHandleValue(personData).toFixed(0)}</span></p>
+            <Statistic
+              title='持仓市值（USD）'
+              value={getLastestDataHandleValue(personData)}
+              precision={0}
+            />
           </Col>
           <Col xs={12}>
-            <p className="card-right-title">持仓收益</p>
-            <p className={cn('card-right-content', getNumberColor(getIncomeRate(personData)))}><span className="size-30">{`${getNumberFormat((getIncomeRate(personData)).toFixed(2))}% `}</span></p>
+            <Statistic
+              title='持仓收益'
+              value={personIncomeRate}
+              precision={2}
+              suffix='%'
+              isNormal={false}
+            />
           </Col>
           <Col xs={12}>
-            <p className="card-right-title">持仓份额</p>
-            <p className={cn('card-right-content')}><span className="size-30">{getLastestDataShare(personData).toFixed(0)}</span></p>
+            <Statistic
+              title='持仓份额'
+              value={getLastestDataShare(personData)}
+              precision={0}
+            />
           </Col>
           <Col xs={12}>
-            <p className="card-right-title">持仓成本(USD)</p>
-            <p className={cn('card-right-content')}><span className="size-30">{getLastestDataCost(personData).toFixed(4)}</span></p>
+            <Statistic
+              title='持仓成本(USD)'
+              value={getLastestDataCost(personData)}
+              precision={4}
+            />
           </Col>
         </Row>
         <Table columns={columns} dataSource={dataSource([...personData].reverse())} />
@@ -371,16 +412,6 @@ export const Details = styled(DetailsComponent)`
       color:rgba(19,24,31,1);
       padding-right: 6px;
     }
-    .card-subtitle {
-      border: 1px solid rgba(18,186,46,1);
-      border-radius: 3px;
-      font-size:12px;
-      font-family:PingFang SC;
-      font-weight:400;
-      color:rgba(18,186,46,1);
-      padding: 2px 6px;
-      margin: 0 6px;
-    }
   }
 }
 
@@ -428,13 +459,10 @@ export const Details = styled(DetailsComponent)`
   font-weight:600;
 }
 .green {
-  color:rgba(18,186,46,1);
+  color: #3f8600;
 }
 .red {
-  color:rgba(214,85,55,1);
-}
-.size-30 {
-  font-size: 25px;
+  color: #cf1322;
 }
 .grey {
   color:rgba(19,24,31, 0.6);

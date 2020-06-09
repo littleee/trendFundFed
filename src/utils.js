@@ -15,6 +15,13 @@ export const getNumberFormat = value => {
   return value
 }
 
+export const isNumberGreaterThanZero = value => {
+  if(Number(value) >= 0){
+    return true
+  }
+  return false
+}
+
 export const getDataByDayFormat = data => data.filter(x=>new Date(x[0]).getHours() === 8)
 
 export const getRunDays = (data) => {

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import footerIcon from './footer.png';
 import bannerIcon from './banner.png';
-import { Layout, Row, Divider, Card, Typography, Col } from 'antd';
-import { LineChart } from '../../components/LineChart';
+import { Layout, Row, Divider, Card, Typography, Col, Tag } from 'antd';
 import axios from 'axios';
 import echarts from 'echarts'
 import cn from 'classnames'
@@ -10,7 +9,7 @@ import styled from "styled-components";
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { getNumberColor, getNumberFormat, getDataByDayFormat, getRunDays, getIncomeRate } from '../../utils';
-
+import { Statistic, LineChart } from '../../components';
 const { Text } = Typography;
 const { Content, Footer } = Layout;
 
@@ -137,7 +136,7 @@ const HomeComponent = ({className}) => {
             <Row className="card-title-wrapper">
               <Col sm={4} xs={24}><Text className="card-title">T1 趋势跟踪策略</Text></Col>
               <Col sm={20} xs={24} style={{textAlign: 'right'}}>
-                <Text className="card-subtitle">运行中</Text>
+                <Tag color="green">运行中</Tag>
               </Col>
               <div>
               {
@@ -155,42 +154,64 @@ const HomeComponent = ({className}) => {
               }
               </Col>
               <Col sm={8} xs={24} className="card-right">
-                <div style={{width: '100%'}}>
-                <Row>
+                <Row style={{width: '100%'}}>
                   <Col xs={12}>
-                    <p className="card-right-title">成立以来收益</p>
-                    <p className={`card-right-content size-30 ${getNumberColor(getIncomeRate(t1Data).toFixed(2))}`}>{ `${getNumberFormat(getIncomeRate(t1Data).toFixed(2))}% `}</p>
+                    <Statistic title="成立以来收益" value={getIncomeRate(t1Data)} precision={2} suffix='%' isNormal={false}/>
                   </Col>
                   <Col xs={12}>
-                    <p className="card-right-title">最新净值 ({t1Data.length > 0 ? dayjs(t1Data[t1Data.length - 1][0] * 1000).format('MM-DD') : '--'}）</p>
-                    <p className="card-right-content"><span className="size-30">{t1Data.length > 0 ? t1Data[t1Data.length - 1][1].toFixed(4) : '--'}</span> <span className="grey">USD</span></p>
+                    <Statistic
+                      title={`最新净值（${t1Data.length > 0 ? dayjs(t1Data[t1Data.length - 1][0] * 1000).format('MM-DD') : '--'}）`}
+                      value={t1Data.length > 0 ? t1Data[t1Data.length - 1][1] : 0}
+                      precision={4}
+                      suffix='USD'
+                    />
                   </Col>
                 </Row>
-                <Row>
+                <Row style={{width: '100%'}}>
                   <Col xs={8}>
-                    <p className="card-right-title">昨日涨跌</p>
-                    <p className={cn('card-right-content', getNumberColor(getIncomeRate(t1Data, 1)))}>{getNumberFormat(getIncomeRate(t1Data,1).toFixed(2))}%</p>
+                  <Statistic
+                    title='昨日涨跌'
+                    value={getIncomeRate(t1Data, 1)}
+                    precision={2}
+                    suffix='%'
+                    isNormal={false}
+                  />
                   </Col>
                   <Col xs={8}>
-                  <p className="card-right-title">近1月涨跌</p>
-                  <p className={cn('card-right-content', getNumberColor(getIncomeRate(t1Data,30)))}>{getNumberFormat(getIncomeRate(t1Data,30).toFixed(2))}%</p>
+                  <Statistic
+                    title='近1月涨跌'
+                    value={getIncomeRate(t1Data, 30)}
+                    precision={2}
+                    suffix='%'
+                    isNormal={false}
+                  />
                   </Col>
                   <Col xs={8}>
-                  <p className="card-right-title">近3月涨跌</p>
-                  <p className={cn('card-right-content', getNumberColor(getIncomeRate(t1Data,90)))}>{getNumberFormat(getIncomeRate(t1Data,90).toFixed(2))}%</p>
+                  <Statistic
+                    title='近3月涨跌'
+                    value={getIncomeRate(t1Data, 90)}
+                    precision={2}
+                    suffix='%'
+                    isNormal={false}
+                  />
                   </Col>
                 </Row>
-                <Row>
+                <Row style={{width: '100%'}}>
                   <Col xs={8}>
-                    <p className="card-right-title">运行天数</p>
-                    <p className="card-right-content">{getRunDays(t1Data)}</p>
+                  <Statistic
+                    title='运行天数'
+                    value={getRunDays(t1Data)}
+                    precision={0}
+                  />
                   </Col>
                   <Col xs={16}>
-                    <p className="card-right-title">交易标的</p>
-                    <p className="card-right-content">BTCUSD 永续合约</p>
+                  <Statistic
+                    title='交易标的'
+                    value='BTCUSD 永续合约'
+                    precision={0}
+                  />
                   </Col>
                 </Row>
-                </div>
               </Col>
             </Row>
           </Card>
@@ -273,17 +294,6 @@ const HomeComponent = ({className}) => {
     padding-right: 6px;
   }
 
-  .card .card-subtitle {
-    border: 1px solid rgba(18,186,46,1);
-    border-radius: 3px;
-    font-size:12px;
-    font-family:PingFang SC;
-    font-weight:400;
-    color:rgba(18,186,46,1);
-    padding: 2px 6px;
-    margin: 0 6px;
-  }
-
   .ant-card-body {
     padding: 0;
   }
@@ -296,6 +306,8 @@ const HomeComponent = ({className}) => {
     border-left: 1px solid rgba(0, 0, 0, .1);
     display: flex;
     align-items: center;
+    flex-direction: column;
+    justify-content: space-around;
   }
 
   .card-right-title {
@@ -323,13 +335,10 @@ const HomeComponent = ({className}) => {
     font-weight:600;
   }
   .green {
-    color:rgba(18,186,46,1);
+    color: #3f8600;
   }
   .red {
-    color:rgba(214,85,55,1);
-  }
-  .size-30 {
-    font-size: 25px;
+    color: #cf1322;
   }
   .grey {
     color:rgba(19,24,31, 0.6);
