@@ -18,6 +18,7 @@ export const DetailsComponent = ({className}) => {
   const [t1Data, setT1Data] = useState([]);
   const [handleData, setHandleData] = useState([]);
   const [personData, setPersonData] = useState([]);
+  const [incomeValue, setIncomeValue] = useState([]);
   const [dw, setDw] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useParams();
@@ -25,7 +26,7 @@ export const DetailsComponent = ({className}) => {
   useEffect(()=> {
     const fetchCharts = async () => {
     const [{data: t1}, {data:handleBtc}, {data: person}, {data: dwData}] = await Promise.all([
-      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/t1/main.json`),
+      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${user}/main.json`),
       axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`),
       axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${user}/main.json`),
       axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${user}/dw.json`)
@@ -43,9 +44,19 @@ export const DetailsComponent = ({className}) => {
     const startPriceByT1 = t1[0][1];
     const t1Income = t1.map(x=>[x[0] * 1000 - 24 * 60 * 60 * 1000, Math.floor((x[1]/startPriceByT1 - 1) * 10000)/100]);
     const handleIncome = handleBtc.map(x=>[x[0] * 1000 - 24 * 60 * 60 * 1000, Math.floor((x[1]/startPriceByHandle - 1) * 10000)/100]);
+    let value = 0;
+    const incomeValue = person.map((x,i)=>{
+      if(i+1 >= person.length){
+        return undefined
+      }
+      value += getNumberWithDecimal(person[i+1][4] - person[i][4], 1)
+      return [person[i][0] * 1000, value]
+    })
+    incomeValue.unshift([person[0][0]*1000 - 24 * 60 * 60 * 1000, 0])
     setT1Income(getDataByDayFormat(t1Income));
     setHandleIncome(getDataByDayFormat(handleIncome))
     setIsLoading(false);
+    setIncomeValue(incomeValue)
   };
 
   fetchCharts();
@@ -53,32 +64,26 @@ export const DetailsComponent = ({className}) => {
 
   const option = {
       title: {
-        text: '收益曲线',
+        text: '累计盈亏',
       },
       tooltip: {
           trigger: 'axis',
           formatter: function (params) {
             const date = new Date(params[0].data[0]);
             const dateFormat = echarts.format.formatTime("yyyy-MM-dd hh:mm:ss", date)
-            var returnHtmT1 = params[0] ? `${params[0].data[1]}%` : '--';
-            var returnHtmlBTC = params[1] ? `${params[1].data[1]}%` : '--';
-            return `<span>${dateFormat}</span><br/><span>本策略：${returnHtmT1}</span> <br/> <span>BTCUSD: ${returnHtmlBTC}</span>`;
+            var returnHtmT1 = params[0] ? `${getNumberWithDecimal(params[0].data[1],1)}` : '--';
+            return `<span>${dateFormat}</span><br/><span>累计盈亏：${returnHtmT1}</span> <br/>`;
           },
       },
       legend: {
         data: [{
-          name: '本策略',
-          // 强制设置图形为圆。
-          icon: 'circle',
-        },
-        {
-          name: 'BTCUSD',
+          name: '累计盈亏',
           // 强制设置图形为圆。
           icon: 'circle',
         }],
         formatter: (name) => {
-          const value = name === '本策略' ? t1Income : handleIncome;
-          return value.length === 0 ? `${name} +0.00%` : `${name} ${getNumberFormat(value[value.length -1][1])}%`
+
+          return incomeValue.length === 0 ? `${name} +0.00%` : `${name} ${getNumberFormat(incomeValue[incomeValue.length -2][1])}`
         },
         right: 0,
         top: 3
@@ -97,30 +102,20 @@ export const DetailsComponent = ({className}) => {
           type: 'value',
           axisLabel: {
              show:true,
-             formatter:'{value}%'
+             formatter:'{value}'
           },
       },
       series: [
           {
-              name: '本策略',
+              name: '累计盈亏',
               type: 'line',
-              data: t1Income,
+              data: incomeValue,
               itemStyle: {
                 color: '#ED662C'
               },
               showSymbol: false,
               hoverAnimation: true,
-          },
-          {
-              name: 'BTCUSD',
-              type: 'line',
-              data: handleIncome,
-              itemStyle: {
-                color: '#50B7F9'
-              },
-              showSymbol: false,
-              hoverAnimation: true,
-          },
+          }
       ]
   };
 
@@ -234,36 +229,44 @@ export const DetailsComponent = ({className}) => {
     <Layout className={className}>
       <Divider className="divider"/>
       <Content>
-        <Row className="content" gutter={16}>
-        <Col sm={16} xs={24} className="content-left">
+        <Row  gutter={24} className="content">
+        <Col sm={24} xs={24} >
           <Card className="card">
           <Row className="card-title-wrapper">
-            <Col sm={6} xs={12}><Text className="card-title">T1 趋势跟踪策略</Text></Col>
-            <Col sm={18} xs={12} style={{textAlign: 'right'}}>
-              <Tag color="green">运行中</Tag>
-            </Col>
+            <Col sm={24} xs={24}><Text className="card-title">{user} T1 策略持仓</Text></Col>
           </Row>
             <Row className="p-24">
-              <Col sm={8} xs={12}>
-                 <Statistic title="成立以来收益" value={t1IncomeRate} precision={2} suffix='%' isNormal={false}/>
+              <Col sm={6} xs={12}>
+              <Statistic
+                title='持仓市值（USD）'
+                value={getLastestDataHandleValue(personData)}
+                precision={0}
+              />
               </Col>
-              <Col sm={8} xs={12}>
-                <Statistic
-                  title={`最新净值（${t1Data.length > 0 ? dayjs(t1Data[t1Data.length - 1][0] * 1000).format('MM-DD') : '--'}）`}
-                  value={t1Data.length > 0 ? t1Data[t1Data.length - 1][1] : 0}
-                  precision={4}
-                  suffix='USD'
-                />
+              <Col sm={6} xs={12}>
+                         <Statistic
+                            title='持仓收益'
+                           value={personIncomeRate}
+                            precision={2}
+                            suffix='%'
+                           isNormal={false}
+                          />
               </Col>
-              <Col sm={8} xs={24}>
-                <Statistic
-                  title='昨日涨跌'
-                  value={getIncomeRate(t1Data, 1)}
-                  precision={2}
-                  suffix='%'
-                  isNormal={false}
-                />
+              <Col sm={6} xs={24}>
+              <Statistic
+                title='持仓份额'
+                value={getLastestDataShare(personData)}
+                precision={0}
+              />
               </Col>
+              <Col sm={6} xs={24}>
+              <Statistic
+                title='持仓成本(USD)'
+                value={getLastestDataCost(personData)}
+                precision={4}
+              />
+              </Col>
+
             </Row>
             <Row>
               <Col xs={24} className="card-left">
@@ -275,97 +278,31 @@ export const DetailsComponent = ({className}) => {
               }
               </Col>
             </Row>
-            <Row className="p-24">
-              <Col sm={6}  xs={12}>
-                <Statistic
-                  title='近1月涨跌'
-                  value={getIncomeRate(t1Data, 30)}
-                  precision={2}
-                  suffix='%'
-                  isNormal={false}
-                />
-              </Col>
-              <Col sm={6} xs={12}>
-              <Statistic
-                title='近3月涨跌'
-                value={getIncomeRate(t1Data, 90)}
-                precision={2}
-                suffix='%'
-                isNormal={false}
-              />
-              </Col>
-              <Col sm={6} xs={12}>
-              <Statistic
-                title='运行天数'
-                value={getRunDays(t1Data)}
-                precision={0}
-              />
-              </Col>
-              <Col sm={6} x={12}>
-              <Statistic
-                title='交易标的'
-                value='BTCUSD 永续合约'
-                precision={0}
-              />
-              </Col>
-            </Row>
-          </Card>
-
-          <Card className="card m-t-24 m-b-24">
-            <Row className="card-title-wrapper">
-              <div className="title-wrapper-left">
-              <Text className="card-title">历史净值</Text>
-              </div>
-            </Row>
-            <Table columns={columnsT1} dataSource={dataSource([...t1Data].reverse())} />
           </Card>
         </Col>
-        <Col sm={8} xs={24} className="content-right">
-        <Card className="card m-b-24" >
+        </Row>
+        <Row gutter={24} className="content">
+        <Col sm={12} xs={24}>
+        <Card className="card" >
         <Row className="card-title-wrapper">
           <div className="title-wrapper-left">
           <Text className="card-title">{user} 的持仓</Text>
           </div>
         </Row>
-        <Row className="p-24">
-          <Col xs={12}>
-            <Statistic
-              title='持仓市值（USD）'
-              value={getLastestDataHandleValue(personData)}
-              precision={0}
-            />
-          </Col>
-          <Col xs={12}>
-            <Statistic
-              title='持仓收益'
-              value={personIncomeRate}
-              precision={2}
-              suffix='%'
-              isNormal={false}
-            />
-          </Col>
-          <Col xs={12}>
-            <Statistic
-              title='持仓份额'
-              value={getLastestDataShare(personData)}
-              precision={0}
-            />
-          </Col>
-          <Col xs={12}>
-            <Statistic
-              title='持仓成本(USD)'
-              value={getLastestDataCost(personData)}
-              precision={4}
-            />
-          </Col>
-        </Row>
         <Table columns={columns} dataSource={dataSource([...personData].reverse())} />
-        <p><b>交易明细</b></p>
-        <Table columns={columnsExchangeDetails} dataSource={dw} />
+        </Card>
+        </Col>
+        <Col sm={12} xs={24}>
+        <Card className="card">
+          <Row className="card-title-wrapper">
+            <div className="title-wrapper-left">
+            <Text className="card-title">交易明细</Text>
+            </div>
+          </Row>
+          <Table columns={columnsExchangeDetails} dataSource={dw} />
         </Card>
         </Col>
         </Row>
-
       </Content>
     </Layout>
   )
