@@ -33,7 +33,6 @@ export const DetailsComponent = ({className}) => {
     const incomeValue = person.map((x,i)=>{
       return [person[i][0] * 1000,  getNumberWithDecimal(person[i][6], 1)]
     })
-    incomeValue.unshift([person[0][0]*1000 - 24 * 60 * 60 * 1000, 0])
     setIsLoading(false);
     setIncomeValue(incomeValue)
   };
