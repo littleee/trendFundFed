@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Layout, Row, Divider, Card, Typography, Col, Table, Tag } from 'antd';
 import axios from 'axios';
 import echarts from 'echarts'
-import cn from 'classnames'
 import { useParams } from 'react-router-dom';
 import styled from "styled-components";
 import dayjs from 'dayjs';
@@ -16,33 +15,21 @@ export const T1Component = ({className}) => {
   const [t1Income, setT1Income] = useState([]);
   const [handleIncome, setHandleIncome] = useState([]);
   const [t1Data, setT1Data] = useState([]);
-  const [handleData, setHandleData] = useState([]);
-  const [personData, setPersonData] = useState([]);
-  const [dw, setDw] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useParams();
 
   useEffect(()=> {
     const fetchCharts = async () => {
-    const [{data: t1}, {data:handleBtc}, {data: person}, {data: dwData}] = await Promise.all([
+    const [{data: t1}, {data:handleBtc}] = await Promise.all([
       axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/t1/main.json`),
       axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`),
-      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/t1/main.json`),
-      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/t1/dw.json`)
     ]);
     setT1Data(t1);
-    setPersonData(person);
-    setHandleData(handleBtc);
-    setDw([...dwData].reverse().map((item,i) => {
-      return {
-        ...item,
-        key: i
-      }
-    }))
+
     const startPriceByHandle = handleBtc[0][1]
     const startPriceByT1 = t1[0][1];
-    const t1Income = t1.map(x=>[x[0] * 1000 - 24 * 60 * 60 * 1000, Math.floor((x[1]/startPriceByT1 - 1) * 10000)/100]);
-    const handleIncome = handleBtc.map(x=>[x[0] * 1000 - 24 * 60 * 60 * 1000, Math.floor((x[1]/startPriceByHandle - 1) * 10000)/100]);
+    const t1Income = t1.map(x=>[x[0] * 1000, Math.floor((x[1]/startPriceByT1 - 1) * 10000)/100]);
+    const handleIncome = handleBtc.map(x=>[x[0] * 1000, Math.floor((x[1]/startPriceByHandle - 1) * 10000)/100]);
     setT1Income(getDataByDayFormat(t1Income));
     setHandleIncome(getDataByDayFormat(handleIncome))
     setIsLoading(false);
@@ -124,55 +111,6 @@ export const T1Component = ({className}) => {
       ]
   };
 
-  const columns = [
-    {
-      title: '日期',
-      dataIndex: 'date',
-      key: 'date',
-    },
-    // {
-    //   title: '份额',
-    //   dataIndex: 'share',
-    //   key: 'share',
-    // },
-    {
-      title: '市值',
-      dataIndex: 'marketValue',
-      key: 'marketValue',
-      render: (text, row, index) => {
-        const { value, share } = row
-        const result = value * share;
-        return isNaN(result) ? '--' : getNumberWithDecimal(result,1).toLocaleString()
-      }
-    },
-    {
-      title: '收益额',
-      dataIndex: 'incomeValue',
-      key: 'incomeValue',
-      render: text => {
-        return (<span className={getNumberColor(text)}>{getNumberFormat(text)}</span>)
-      }
-    }
-  ]
-
-  const columnsExchangeDetails = [
-    {
-      title: '日期',
-      dataIndex: 'datetime',
-      key: 'datetime',
-    },
-    {
-      title: '金额',
-      dataIndex: 'Value',
-      key: 'Value',
-      render: (text, row, index) => {
-        const { price, amount } = row
-        const result = Number(price) * Number(amount);
-        return <span className={getNumberColor(result)}>{isNaN(result) ? '--' : getNumberFormat(getNumberWithDecimal(result, 1))}</span>
-      }
-    }
-  ]
-
   const columnsT1 = [
     {
       title: '日期',
@@ -200,12 +138,12 @@ export const T1Component = ({className}) => {
       const result = data.reduce((acc, curr, index, arr) => {
         const obj = {
           date: dayjs(curr[0] * 1000).format('YYYY-MM-DD'),
-          value: index === 0 ? '--' : getNumberWithDecimal(arr[index-1][1], 4),
+          value: getNumberWithDecimal(arr[index][1], 4),
           cost: curr[2],
           share: getNumberWithDecimal(curr[3], 0),
           key:curr[0],
-          incomeRate: index !== 0 ? `${getNumberWithDecimal((arr[index - 1][1] / curr[1] - 1) * 100, 2)}` : '--',
-          incomeValue: index !== 0 ? `${getNumberWithDecimal(arr[index - 1][4] - curr[4], 1)}` : '--',
+          incomeRate:  index + 1 < arr.length ? `${getNumberWithDecimal((curr[1] / arr[index + 1][1] - 1) * 100, 2)}` : 0,
+          incomeValue: `${getNumberWithDecimal(arr[index][4] - curr[4], 1)}`,
         }
         return [...acc, obj]
       },[])
@@ -214,21 +152,8 @@ export const T1Component = ({className}) => {
       return []
     }
   }
-  const getLastestDataHandleValue = (data) => {
-    const len = data.length;
-    return len > 0 ? getNumberWithDecimal(data[len-1][1], 4) * getNumberWithDecimal(data[len-1][3], 0) : 0
-  }
-  const getLastestDataCost = (data) => {
-    const len = data.length;
-    return len > 0 ? data[len-1][2] : 0
-  }
-  const getLastestDataShare = (data) => {
-    const len = data.length;
-    return len > 0 ? data[len-1][3] : 0
-  }
 
   const t1IncomeRate = getIncomeRate(t1Data);
-  const personIncomeRate = getIncomeRate(personData);
 
   return (
     <Layout className={className}>
@@ -321,7 +246,6 @@ export const T1Component = ({className}) => {
           </Card>
         </Col>
         </Row>
-
       </Content>
     </Layout>
   )
@@ -377,43 +301,10 @@ export const T1 = styled(T1Component)`
   align-items: center;
 }
 
-.ant-card-body {
-  padding: 0;
-}
 .card-left {
   padding: 0 20px;
 }
-.card-right {
-  padding: 0 20px;
-  border-left: 1px solid rgba(0, 0, 0, .1);
-  display: flex;
-  align-items: center;
-}
 
-.card-right-title {
-  font-size:14px;
-  font-family:PingFang SC;
-  font-weight:400;
-  color:rgba(19,24,31,1);
-  opacity:0.4;
-  margin: 0;
-}
-
-.more {
-  font-size:14px;
-  font-family:PingFang SC;
-  font-weight:400;
-  color:rgba(19,24,31,1);
-  opacity:0.6;
-  margin: 80px auto;
-  text-align: center;
-}
-
-.card-right-content {
-  font-size:18px;
-  font-family:PingFang SC;
-  font-weight:600;
-}
 .green {
   color: #3f8600;
 }

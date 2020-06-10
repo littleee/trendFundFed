@@ -30,13 +30,8 @@ export const DetailsComponent = ({className}) => {
         key: i
       }
     }))
-    let value = 0;
     const incomeValue = person.map((x,i)=>{
-      if(i+1 >= person.length){
-        return undefined
-      }
-      value += getNumberWithDecimal(person[i+1][4] - person[i][4], 1)
-      return [person[i][0] * 1000, value]
+      return [person[i][0] * 1000,  getNumberWithDecimal(person[i][6], 1)]
     })
     incomeValue.unshift([person[0][0]*1000 - 24 * 60 * 60 * 1000, 0])
     setIsLoading(false);
@@ -66,8 +61,7 @@ export const DetailsComponent = ({className}) => {
           icon: 'circle',
         }],
         formatter: (name) => {
-
-          return incomeValue.length === 0 ? `${name} +0.00%` : `${name} ${getNumberFormat(incomeValue[incomeValue.length -2][1])}`
+          return incomeValue.length === 0 ? `${name} +0.0` : `${name} ${getNumberFormat(incomeValue[incomeValue.length - 1][1])}`
         },
         right: 0,
         top: 3
@@ -114,9 +108,7 @@ export const DetailsComponent = ({className}) => {
       dataIndex: 'marketValue',
       key: 'marketValue',
       render: (text, row, index) => {
-        const { value, share } = row
-        const result = value * share;
-        return isNaN(result) ? '--' : getNumberWithDecimal(result,1).toLocaleString()
+        return isNaN(text) ? '--' : getNumberWithDecimal(text,1).toLocaleString()
       }
     },
     {
@@ -143,7 +135,7 @@ export const DetailsComponent = ({className}) => {
         const { price, amount } = row
         const result = Number(price) * Number(amount);
         return <span className={getNumberColor(result)}>{isNaN(result) ? '--' : getNumberFormat(getNumberWithDecimal(result, 1))}</span>
-      }
+      },
     }
   ]
 
@@ -156,8 +148,8 @@ export const DetailsComponent = ({className}) => {
           cost: curr[2],
           share: getNumberWithDecimal(curr[3], 0),
           key:curr[0],
-          incomeRate: index !== 0 ? `${getNumberWithDecimal((arr[index - 1][1] / curr[1] - 1) * 100, 2)}` : '--',
-          incomeValue: index !== 0 ? `${getNumberWithDecimal(arr[index - 1][4] - curr[4], 1)}` : '--',
+          incomeValue: getNumberWithDecimal(curr[9], 2),
+          marketValue: getNumberWithDecimal(curr[7], 1)
         }
         return [...acc, obj]
       },[])
@@ -168,7 +160,7 @@ export const DetailsComponent = ({className}) => {
   }
   const getLastestDataHandleValue = (data) => {
     const len = data.length;
-    return len > 0 ? getNumberWithDecimal(data[len-1][1], 4) * getNumberWithDecimal(data[len-1][3], 0) : 0
+    return len > 0 ? getNumberWithDecimal(data[len-1][7], 4) : '--'
   }
   const getLastestDataCost = (data) => {
     const len = data.length;
@@ -202,7 +194,7 @@ export const DetailsComponent = ({className}) => {
               <Col sm={5} xs={12}>
                  <Statistic
                     title='累计收益（USD）'
-                   value={personData.length > 0 ? personData[personData.length-1][4] + personData[personData.length-1][5] : 0}
+                   value={personData.length > 0 ? personData[personData.length-1][6] : 0}
                     precision={1}
                    isNormal={false}
                   />
@@ -210,7 +202,7 @@ export const DetailsComponent = ({className}) => {
               <Col sm={4} xs={12}>
                  <Statistic
                     title='持仓收益率'
-                   value={personIncomeRate}
+                   value={personData.length > 0 ? personData[personData.length-1][8]*100 : 0}
                     precision={2}
                     suffix='%'
                    isNormal={false}
@@ -227,7 +219,7 @@ export const DetailsComponent = ({className}) => {
               <Statistic
                 title='持仓成本(USD)'
                 value={getLastestDataCost(personData)}
-                precision={5}
+                precision={4}
               />
               </Col>
             </Row>

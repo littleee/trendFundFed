@@ -59,9 +59,6 @@ const App = styled(({className}) => {
 }
 .ant-menu-item {
   background: rgb(14,16,20);
-  &:hover{
-    background: rgb(14,16,20);
-  }
 }
 .loading {
   display: flex;
