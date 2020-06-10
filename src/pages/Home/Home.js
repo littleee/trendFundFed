@@ -132,18 +132,7 @@ const HomeComponent = ({className}) => {
           </div>
         </Row>
         <Row className="content">
-          <Card className="card">
-            <Row className="card-title-wrapper">
-              <Col sm={4} xs={12}><Text className="card-title">T1 趋势跟踪策略</Text></Col>
-              <Col sm={20} xs={12} style={{textAlign: 'right'}}>
-                <Tag color="green">运行中</Tag>
-              </Col>
-              <div>
-              {
-                params.action && <a href={`/#/details/${params.action}`}>策略详情></a>
-              }
-              </div>
-            </Row>
+          <Card className="card" title="T1 趋势跟踪策略" extra={<Tag color="green">运行中</Tag>}>
             <Row style = {{padding: '20px 0'}} >
               <Col sm={16} xs={24} className="card-left">
               {
@@ -278,25 +267,6 @@ const HomeComponent = ({className}) => {
     border-radius:6px;
   }
 
-  .card .card-title-wrapper {
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-    padding: 15px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .card .card-title {
-    font-size:18px;
-    font-family:PingFang SC;
-    font-weight:400;
-    color:rgba(19,24,31,1);
-    padding-right: 6px;
-  }
-
-  .ant-card-body {
-    padding: 0;
-  }
   .card-left {
     padding: 0 20px;
     margin-bottom: 20px;
@@ -310,15 +280,6 @@ const HomeComponent = ({className}) => {
     justify-content: space-around;
   }
 
-  .card-right-title {
-    font-size:14px;
-    font-family:PingFang SC;
-    font-weight:400;
-    color:rgba(19,24,31,1);
-    opacity:0.4;
-    margin: 0;
-  }
-
   .more {
     font-size:14px;
     font-family:PingFang SC;
@@ -329,11 +290,6 @@ const HomeComponent = ({className}) => {
     text-align: center;
   }
 
-  .card-right-content {
-    font-size:18px;
-    font-family:PingFang SC;
-    font-weight:600;
-  }
   .green {
     color: #3f8600;
   }

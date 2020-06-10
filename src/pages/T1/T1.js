@@ -143,7 +143,6 @@ export const T1Component = ({className}) => {
           share: getNumberWithDecimal(curr[3], 0),
           key:curr[0],
           incomeRate:  index + 1 < arr.length ? `${getNumberWithDecimal((curr[1] / arr[index + 1][1] - 1) * 100, 2)}` : 0,
-          incomeValue: `${getNumberWithDecimal(arr[index][4] - curr[4], 1)}`,
         }
         return [...acc, obj]
       },[])
@@ -161,14 +160,8 @@ export const T1Component = ({className}) => {
       <Content>
         <Row className="content" gutter={24}>
         <Col sm={24} xs={24} className="content-left">
-          <Card className="card">
-          <Row className="card-title-wrapper">
-            <Col sm={6} xs={12}><Text className="card-title">T1 趋势跟踪策略</Text></Col>
-            <Col sm={18} xs={12} style={{textAlign: 'right'}}>
-              <Tag color="green">运行中</Tag>
-            </Col>
-          </Row>
-            <Row className="p-24">
+          <Card title="T1 趋势跟踪策略" extra={<Tag color="green">运行中</Tag>}>
+            <Row>
               <Col sm={8} xs={12}>
                  <Statistic title="成立以来收益" value={t1IncomeRate} precision={2} suffix='%' isNormal={false}/>
               </Col>
@@ -190,8 +183,8 @@ export const T1Component = ({className}) => {
                 />
               </Col>
             </Row>
-            <Row>
-              <Col xs={24} className="card-left">
+            <Row style={{marginTop: '24px'}}>
+              <Col xs={24}>
               {
                 <LineChart
                   option={option}
@@ -236,12 +229,7 @@ export const T1Component = ({className}) => {
             </Row>
           </Card>
 
-          <Card className="card m-t-24 m-b-24">
-            <Row className="card-title-wrapper">
-              <div className="title-wrapper-left">
-              <Text className="card-title">历史净值</Text>
-              </div>
-            </Row>
+          <Card className="card m-t-24 m-b-24" title="历史净值">
             <Table columns={columnsT1} dataSource={dataSource([...t1Data].reverse())} />
           </Card>
         </Col>
@@ -274,10 +262,7 @@ export const T1 = styled(T1Component)`
 
   }
   .card {
-    width: 100%;
-    border-radius: 6px;
-    box-shadow:0px 6px 13px 0px rgba(0, 0, 0, 0.03);
-    border-radius:6px;
+
     .card-title-wrapper {
       border-bottom: 1px solid rgba(0,0,0,0.1);
       padding: 15px 24px;

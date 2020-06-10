@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Row, Divider, Card, Typography, Col, Table } from 'antd';
+import { Layout, Row, Divider, Card, Col, Table } from 'antd';
 import axios from 'axios';
 import echarts from 'echarts'
 import { useParams } from 'react-router-dom';
 import styled from "styled-components";
 import dayjs from 'dayjs';
-import { getNumberColor, getNumberFormat, getIncomeRate, getNumberWithDecimal } from '../../utils';
+import { getNumberColor, getNumberFormat, getNumberWithDecimal } from '../../utils';
 import { Statistic, LineChart } from '../../components';
 
-const { Text } = Typography;
 const { Content } = Layout;
 
 export const DetailsComponent = ({className}) => {
@@ -170,19 +169,14 @@ export const DetailsComponent = ({className}) => {
     return len > 0 ? data[len-1][3] : 0
   }
 
-  const personIncomeRate = getIncomeRate(personData);
-
   return (
     <Layout className={className}>
       <Divider className="divider"/>
       <Content>
-        <Row  gutter={24} className="content">
+        <Row gutter={24} className="content">
         <Col sm={24} xs={24} >
-          <Card className="card">
-          <Row className="card-title-wrapper">
-            <Col sm={24} xs={24}><Text className="card-title">{user} T1 策略持仓</Text></Col>
-          </Row>
-            <Row className="p-24">
+          <Card title={`${user} T1 策略持仓`}>
+            <Row style={{marginBottom: '24px'}}>
               <Col sm={5} xs={12}>
               <Statistic
                 title='持仓市值（USD）'
@@ -207,14 +201,14 @@ export const DetailsComponent = ({className}) => {
                    isNormal={false}
                   />
               </Col>
-              <Col sm={5} xs={24}>
+              <Col sm={5} xs={12}>
               <Statistic
                 title='持仓份额'
                 value={getLastestDataShare(personData)}
                 precision={0}
               />
               </Col>
-              <Col sm={5} xs={24}>
+              <Col sm={5} xs={12}>
               <Statistic
                 title='持仓成本(USD)'
                 value={getLastestDataCost(personData)}
@@ -237,18 +231,12 @@ export const DetailsComponent = ({className}) => {
         </Row>
         <Row gutter={24} className="content">
         <Col sm={12} xs={24}>
-        <Card className="card" >
-        <Row className="card-title-wrapper">
-          <Text className="card-title">收益明细</Text>
-        </Row>
+        <Card title="收益明细" >
         <Table columns={columns} dataSource={dataSource([...personData].reverse())} />
         </Card>
         </Col>
         <Col sm={12} xs={24}>
-        <Card className="card">
-          <Row className="card-title-wrapper">
-            <Text className="card-title">交易明细</Text>
-          </Row>
+        <Card title="交易明细">
           <Table columns={columnsExchangeDetails} dataSource={dw} />
         </Card>
         </Col>
@@ -277,59 +265,8 @@ export const Details = styled(DetailsComponent)`
   padding-top: 40px;
   max-width: 1120px;
   margin: 0 auto!important;
-  .content-right {
-
-  }
-  .card {
-    width: 100%;
-    border-radius: 6px;
-    box-shadow:0px 6px 13px 0px rgba(0, 0, 0, 0.03);
-    border-radius:6px;
-    .card-title-wrapper {
-      border-bottom: 1px solid rgba(0,0,0,0.1);
-      padding: 15px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .card-title {
-      font-size:18px;
-      font-family:PingFang SC;
-      font-weight:400;
-      color:rgba(19,24,31,1);
-      padding-right: 6px;
-    }
-  }
 }
 
-.ant-card-body {
-  padding: 0;
-}
-.card-left {
-  padding: 0 20px;
-}
-.card-right {
-  padding: 0 20px;
-  border-left: 1px solid rgba(0, 0, 0, .1);
-  display: flex;
-  align-items: center;
-}
-
-.more {
-  font-size:14px;
-  font-family:PingFang SC;
-  font-weight:400;
-  color:rgba(19,24,31,1);
-  opacity:0.6;
-  margin: 80px auto;
-  text-align: center;
-}
-
-.card-right-content {
-  font-size:18px;
-  font-family:PingFang SC;
-  font-weight:600;
-}
 .green {
   color: #3f8600;
 }
@@ -340,8 +277,6 @@ export const Details = styled(DetailsComponent)`
   color:rgba(19,24,31, 0.6);
 }
 @media (max-width: 375px){
-  .card-left {
-    padding: 0;
-  }
+
 }
 `
