@@ -1,49 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Row, Divider, Card, Typography, Col, Table, Tag } from 'antd';
+import { Layout, Row, Divider, Card, Typography, Col, Table } from 'antd';
 import axios from 'axios';
 import echarts from 'echarts'
-import cn from 'classnames'
 import { useParams } from 'react-router-dom';
 import styled from "styled-components";
 import dayjs from 'dayjs';
-import { getNumberColor, getNumberFormat, getDataByDayFormat, getRunDays, getIncomeRate, getNumberWithDecimal } from '../../utils';
+import { getNumberColor, getNumberFormat, getIncomeRate, getNumberWithDecimal } from '../../utils';
 import { Statistic, LineChart } from '../../components';
 
 const { Text } = Typography;
 const { Content } = Layout;
 
 export const DetailsComponent = ({className}) => {
-  const [t1Income, setT1Income] = useState([]);
-  const [handleIncome, setHandleIncome] = useState([]);
-  const [t1Data, setT1Data] = useState([]);
-  const [handleData, setHandleData] = useState([]);
   const [personData, setPersonData] = useState([]);
   const [incomeValue, setIncomeValue] = useState([]);
   const [dw, setDw] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useParams();
-
   useEffect(()=> {
     const fetchCharts = async () => {
-    const [{data: t1}, {data:handleBtc}, {data: person}, {data: dwData}] = await Promise.all([
-      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${user}/main.json`),
-      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`),
+    const [{data: person}, {data: dwData}] = await Promise.all([
       axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${user}/main.json`),
       axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${user}/dw.json`)
     ]);
-    setT1Data(t1);
     setPersonData(person);
-    setHandleData(handleBtc);
     setDw([...dwData].reverse().map((item,i) => {
       return {
         ...item,
         key: i
       }
     }))
-    const startPriceByHandle = handleBtc[0][1]
-    const startPriceByT1 = t1[0][1];
-    const t1Income = t1.map(x=>[x[0] * 1000 - 24 * 60 * 60 * 1000, Math.floor((x[1]/startPriceByT1 - 1) * 10000)/100]);
-    const handleIncome = handleBtc.map(x=>[x[0] * 1000 - 24 * 60 * 60 * 1000, Math.floor((x[1]/startPriceByHandle - 1) * 10000)/100]);
     let value = 0;
     const incomeValue = person.map((x,i)=>{
       if(i+1 >= person.length){
@@ -53,8 +39,6 @@ export const DetailsComponent = ({className}) => {
       return [person[i][0] * 1000, value]
     })
     incomeValue.unshift([person[0][0]*1000 - 24 * 60 * 60 * 1000, 0])
-    setT1Income(getDataByDayFormat(t1Income));
-    setHandleIncome(getDataByDayFormat(handleIncome))
     setIsLoading(false);
     setIncomeValue(incomeValue)
   };
@@ -64,7 +48,7 @@ export const DetailsComponent = ({className}) => {
 
   const option = {
       title: {
-        text: '累计盈亏',
+        text: '累计收益',
       },
       tooltip: {
           trigger: 'axis',
@@ -72,12 +56,12 @@ export const DetailsComponent = ({className}) => {
             const date = new Date(params[0].data[0]);
             const dateFormat = echarts.format.formatTime("yyyy-MM-dd hh:mm:ss", date)
             var returnHtmT1 = params[0] ? `${getNumberWithDecimal(params[0].data[1],1)}` : '--';
-            return `<span>${dateFormat}</span><br/><span>累计盈亏：${returnHtmT1}</span> <br/>`;
+            return `<span>${dateFormat}</span><br/><span>累计收益：${returnHtmT1}</span> <br/>`;
           },
       },
       legend: {
         data: [{
-          name: '累计盈亏',
+          name: '累计收益',
           // 强制设置图形为圆。
           icon: 'circle',
         }],
@@ -107,7 +91,7 @@ export const DetailsComponent = ({className}) => {
       },
       series: [
           {
-              name: '累计盈亏',
+              name: '累计收益',
               type: 'line',
               data: incomeValue,
               itemStyle: {
@@ -125,11 +109,6 @@ export const DetailsComponent = ({className}) => {
       dataIndex: 'date',
       key: 'date',
     },
-    // {
-    //   title: '份额',
-    //   dataIndex: 'share',
-    //   key: 'share',
-    // },
     {
       title: '市值',
       dataIndex: 'marketValue',
@@ -168,28 +147,6 @@ export const DetailsComponent = ({className}) => {
     }
   ]
 
-  const columnsT1 = [
-    {
-      title: '日期',
-      dataIndex: 'date',
-      key: 'date',
-    },
-    {
-      title: '净值',
-      dataIndex: 'value',
-      key: 'value',
-      render: text => text
-    },
-    {
-      title: '日涨幅',
-      dataIndex: 'incomeRate',
-      key: 'incomeRate',
-      render: text => {
-        return (<span className={getNumberColor(text)}>{getNumberFormat(text)}%</span>)
-      }
-    },
-  ]
-
   const dataSource = data => {
     if(data.length > 0){
       const result = data.reduce((acc, curr, index, arr) => {
@@ -222,7 +179,6 @@ export const DetailsComponent = ({className}) => {
     return len > 0 ? data[len-1][3] : 0
   }
 
-  const t1IncomeRate = getIncomeRate(t1Data);
   const personIncomeRate = getIncomeRate(personData);
 
   return (
@@ -236,37 +192,44 @@ export const DetailsComponent = ({className}) => {
             <Col sm={24} xs={24}><Text className="card-title">{user} T1 策略持仓</Text></Col>
           </Row>
             <Row className="p-24">
-              <Col sm={6} xs={12}>
+              <Col sm={5} xs={12}>
               <Statistic
                 title='持仓市值（USD）'
                 value={getLastestDataHandleValue(personData)}
                 precision={0}
               />
               </Col>
-              <Col sm={6} xs={12}>
-                         <Statistic
-                            title='持仓收益'
-                           value={personIncomeRate}
-                            precision={2}
-                            suffix='%'
-                           isNormal={false}
-                          />
+              <Col sm={5} xs={12}>
+                 <Statistic
+                    title='累计收益（USD）'
+                   value={personData.length > 0 ? personData[personData.length-1][4] + personData[personData.length-1][5] : 0}
+                    precision={1}
+                   isNormal={false}
+                  />
               </Col>
-              <Col sm={6} xs={24}>
+              <Col sm={4} xs={12}>
+                 <Statistic
+                    title='持仓收益率'
+                   value={personIncomeRate}
+                    precision={2}
+                    suffix='%'
+                   isNormal={false}
+                  />
+              </Col>
+              <Col sm={5} xs={24}>
               <Statistic
                 title='持仓份额'
                 value={getLastestDataShare(personData)}
                 precision={0}
               />
               </Col>
-              <Col sm={6} xs={24}>
+              <Col sm={5} xs={24}>
               <Statistic
                 title='持仓成本(USD)'
                 value={getLastestDataCost(personData)}
-                precision={4}
+                precision={5}
               />
               </Col>
-
             </Row>
             <Row>
               <Col xs={24} className="card-left">
@@ -285,9 +248,7 @@ export const DetailsComponent = ({className}) => {
         <Col sm={12} xs={24}>
         <Card className="card" >
         <Row className="card-title-wrapper">
-          <div className="title-wrapper-left">
-          <Text className="card-title">{user} 的持仓</Text>
-          </div>
+          <Text className="card-title">收益明细</Text>
         </Row>
         <Table columns={columns} dataSource={dataSource([...personData].reverse())} />
         </Card>
@@ -295,9 +256,7 @@ export const DetailsComponent = ({className}) => {
         <Col sm={12} xs={24}>
         <Card className="card">
           <Row className="card-title-wrapper">
-            <div className="title-wrapper-left">
             <Text className="card-title">交易明细</Text>
-            </div>
           </Row>
           <Table columns={columnsExchangeDetails} dataSource={dw} />
         </Card>
@@ -352,12 +311,6 @@ export const Details = styled(DetailsComponent)`
   }
 }
 
-.card .title-wrapper-left {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .ant-card-body {
   padding: 0;
 }
@@ -369,15 +322,6 @@ export const Details = styled(DetailsComponent)`
   border-left: 1px solid rgba(0, 0, 0, .1);
   display: flex;
   align-items: center;
-}
-
-.card-right-title {
-  font-size:14px;
-  font-family:PingFang SC;
-  font-weight:400;
-  color:rgba(19,24,31,1);
-  opacity:0.4;
-  margin: 0;
 }
 
 .more {
