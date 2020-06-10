@@ -40,7 +40,7 @@ export const T1Component = ({className}) => {
 
   const option = {
       title: {
-        text: '收益曲线',
+        text: '业绩走势',
       },
       tooltip: {
           trigger: 'axis',
