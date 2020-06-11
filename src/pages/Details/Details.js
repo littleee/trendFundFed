@@ -91,15 +91,28 @@ export const DetailsComponent = ({ className }) => {
       bottom: "3%",
       containLabel: true,
     },
-
     xAxis: {
       type: "time",
+      splitLine: {
+        show: false,
+      },
+      axisLine: {
+        lineStyle: {
+          color: "#888",
+        },
+      },
     },
     yAxis: {
       type: "value",
       axisLabel: {
         show: true,
         formatter: "{value}",
+      },
+      splitNumber: 3,
+      axisLine: {
+        lineStyle: {
+          color: "#888",
+        },
       },
     },
     series: [
@@ -108,7 +121,7 @@ export const DetailsComponent = ({ className }) => {
         type: "line",
         data: incomeValue,
         itemStyle: {
-          color: "#ED662C",
+          color: "rgb(73,151,247)",
         },
         showSymbol: false,
         hoverAnimation: true,
