@@ -162,6 +162,7 @@ export const DetailsComponent = ({ className }) => {
       title: "日期",
       dataIndex: "datetime",
       key: "datetime",
+      render: (text) => dayjs(text * 1000).format("YYYY-MM-DD"),
     },
     {
       title: "金额",
