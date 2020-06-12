@@ -11,7 +11,6 @@ import dayjs from "dayjs";
 import {
   getNumberColor,
   getNumberFormat,
-  getDataByDayFormat,
   getRunDays,
   getIncomeRate,
 } from "../../utils";
@@ -49,8 +48,8 @@ const HomeComponent = ({ className }) => {
         x[0] * 1000,
         Math.floor((x[1] / startPriceByHandle - 1) * 10000) / 100,
       ]);
-      setT1Income(getDataByDayFormat(t1Income));
-      setHandleIncome(getDataByDayFormat(handleIncome));
+      setT1Income(t1Income);
+      setHandleIncome(handleIncome);
       setIsLoading(false);
     };
 
