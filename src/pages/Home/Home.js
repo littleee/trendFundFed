@@ -13,6 +13,7 @@ import {
   getNumberFormat,
   getRunDays,
   getIncomeRate,
+  getNumberWithDecimal,
 } from "../../utils";
 import { Statistic, LineChart } from "../../components";
 const { Text } = Typography;
@@ -42,11 +43,11 @@ const HomeComponent = ({ className }) => {
       const startPriceByHandle = handleBtc[0][1];
       const t1Income = t1.map((x) => [
         x[0] * 1000,
-        Math.floor((x[1] / startPriceByT1 - 1) * 10000) / 100,
+        (x[1] / startPriceByT1 - 1) * 100,
       ]);
       const handleIncome = handleBtc.map((x) => [
         x[0] * 1000,
-        Math.floor((x[1] / startPriceByHandle - 1) * 10000) / 100,
+        (x[1] / startPriceByHandle - 1) * 100,
       ]);
       setT1Income(t1Income);
       setHandleIncome(handleIncome);
@@ -64,13 +65,14 @@ const HomeComponent = ({ className }) => {
       trigger: "axis",
       formatter: function (params) {
         const date = new Date(params[0].data[0]);
-        const dateFormat = echarts.format.formatTime(
-          "yyyy-MM-dd hh:mm:ss",
-          date
-        );
-        var returnHtmT1 = `${params[0].data[1]}%`;
-        var returnHtmlBTC = `${params[1].data[1]}%`;
-        return `<span>${dateFormat}</span><br/><span>本策略： ${returnHtmT1}</span> <br/> <span>BTCUSD：  ${returnHtmlBTC}</span>`;
+        const dateFormat = echarts.format.formatTime("yyyy-MM-dd", date);
+        var returnHtmT1 = params[0]
+          ? `${getNumberWithDecimal(params[0].data[1], 2)}%`
+          : "--";
+        var returnHtmlBTC = params[1]
+          ? `${getNumberWithDecimal(params[1].data[1], 2)}%`
+          : "--";
+        return `<span>${dateFormat}</span><br/><span>本策略：${returnHtmT1}</span> <br/> <span>BTCUSD: ${returnHtmlBTC}</span>`;
       },
     },
     legend: {
@@ -90,7 +92,9 @@ const HomeComponent = ({ className }) => {
         const value = name === "本策略" ? t1Income : handleIncome;
         return value.length === 0
           ? `${name} +0.00%`
-          : `${name} ${getNumberFormat(value[value.length - 1][1])}%`;
+          : `${name} ${getNumberFormat(
+              getNumberWithDecimal(value[value.length - 1][1], 2)
+            )}%`;
       },
       right: 0,
       top: 3,
