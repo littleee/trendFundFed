@@ -141,7 +141,7 @@ const HomeComponent = ({ className }) => {
         showSymbol: false,
         hoverAnimation: true,
         itemStyle: {
-          color: "rgb(105,193,111)",
+          color: "rgb(73,151,247)",
         },
       },
       {
@@ -149,7 +149,7 @@ const HomeComponent = ({ className }) => {
         type: "line",
         data: handleIncome,
         itemStyle: {
-          color: "rgb(73,151,247)",
+          color: "rgb(105,193,111)",
         },
         showSymbol: false,
         hoverAnimation: true,

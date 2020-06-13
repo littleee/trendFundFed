@@ -131,7 +131,7 @@ export const T1Component = ({ className }) => {
         type: "line",
         data: t1Income,
         itemStyle: {
-          color: "rgb(105,193,111)",
+          color: "rgb(73,151,247)",
         },
         showSymbol: false,
         hoverAnimation: true,
@@ -141,7 +141,7 @@ export const T1Component = ({ className }) => {
         type: "line",
         data: handleIncome,
         itemStyle: {
-          color: "rgb(73,151,247)",
+          color: "rgb(105,193,111)",
         },
         showSymbol: false,
         hoverAnimation: true,
