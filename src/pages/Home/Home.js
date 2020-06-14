@@ -65,7 +65,10 @@ const HomeComponent = ({ className }) => {
       trigger: "axis",
       formatter: function (params) {
         const date = new Date(params[0].data[0]);
-        const dateFormat = echarts.format.formatTime("yyyy-MM-dd", date);
+        const dateFormat = echarts.format.formatTime(
+          "yyyy-MM-dd hh:mm:ss",
+          date
+        );
         var returnHtmT1 = params[0]
           ? `${getNumberWithDecimal(params[0].data[1], 2)}%`
           : "--";

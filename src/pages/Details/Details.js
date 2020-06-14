@@ -162,7 +162,7 @@ export const DetailsComponent = ({ className }) => {
       title: "日期",
       dataIndex: "datetime",
       key: "datetime",
-      render: (text) => dayjs(text * 1000).format("YYYY-MM-DD"),
+      render: (text) => dayjs(text * 1000).format("YYYY-MM-DD hh:mm:ss"),
     },
     {
       title: "金额",
@@ -180,13 +180,31 @@ export const DetailsComponent = ({ className }) => {
         );
       },
     },
+    {
+      title: "净值",
+      dataIndex: "price",
+      key: "price",
+      render: (text) => {
+        return <span>{getNumberWithDecimal(text, 4)}</span>;
+      },
+    },
+    {
+      title: "份额",
+      dataIndex: "amount",
+      key: "amount",
+      render: (text) => {
+        return (
+          <span>{getNumberFormat(getNumberWithDecimal(Number(text), 1))}</span>
+        );
+      },
+    },
   ];
 
   const dataSource = (data) => {
     if (data.length > 0) {
       const result = data.reduce((acc, curr, index, arr) => {
         const obj = {
-          date: dayjs(curr[0] * 1000).format("YYYY-MM-DD"),
+          date: dayjs(curr[0] * 1000).format("YYYY-MM-DD hh:mm:ss"),
           value:
             index === 0 ? "--" : getNumberWithDecimal(arr[index - 1][1], 4),
           cost: curr[2],

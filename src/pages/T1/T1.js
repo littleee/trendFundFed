@@ -60,7 +60,10 @@ export const T1Component = ({ className }) => {
       trigger: "axis",
       formatter: function (params) {
         const date = new Date(params[0].data[0]);
-        const dateFormat = echarts.format.formatTime("yyyy-MM-dd", date);
+        const dateFormat = echarts.format.formatTime(
+          "yyyy-MM-dd hh:mm:ss",
+          date
+        );
         var returnHtmT1 = params[0]
           ? `${getNumberWithDecimal(params[0].data[1], 2)}%`
           : "--";
@@ -177,7 +180,7 @@ export const T1Component = ({ className }) => {
     if (data.length > 0) {
       const result = data.reduce((acc, curr, index, arr) => {
         const obj = {
-          date: dayjs(curr[0] * 1000).format("YYYY-MM-DD"),
+          date: dayjs(curr[0] * 1000).format("YYYY-MM-DD hh:mm:ss"),
           value: getNumberWithDecimal(arr[index][1], 4),
           cost: curr[2],
           share: getNumberWithDecimal(curr[3], 0),
