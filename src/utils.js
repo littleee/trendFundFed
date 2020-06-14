@@ -9,7 +9,7 @@ export const getNumberColor = (value) => {
 };
 
 export const getNumberFormat = (value) => {
-  if (Number(value) > 0) {
+  if (Number(value) >= 0) {
     return `+${value}`;
   }
   return value;
@@ -45,11 +45,26 @@ export const getIncomeRate = (data, days) => {
   return 0;
 };
 
+const decimalFull = (number, decimal) => {
+  let s_x = number.toString();
+  let pos_decimal = s_x.indexOf(".");
+  if (pos_decimal < 0) {
+    pos_decimal = s_x.length;
+    s_x += ".";
+  }
+  while (s_x.length <= pos_decimal + decimal) {
+    s_x += "0";
+  }
+  return s_x;
+};
+
 export const getNumberWithDecimal = (number = 0, decimal = 0) => {
   const multiplier = Math.pow(10, decimal);
   if (Number(number) > 0) {
-    return Math.floor(Number(number) * multiplier) / multiplier;
+    const result = Math.floor(Number(number) * multiplier) / multiplier;
+    return decimalFull(result, decimal);
   } else {
-    return Math.ceil(Number(number) * multiplier) / multiplier;
+    const result = Math.ceil(Number(number) * multiplier) / multiplier;
+    return decimalFull(result, decimal);
   }
 };

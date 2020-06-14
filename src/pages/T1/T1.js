@@ -170,7 +170,9 @@ export const T1Component = ({ className }) => {
       key: "incomeRate",
       render: (text) => {
         return (
-          <span className={getNumberColor(text)}>{getNumberFormat(text)}%</span>
+          <span className={getNumberColor(text)}>
+            {getNumberFormat(getNumberWithDecimal(text, 2))}%
+          </span>
         );
       },
     },
