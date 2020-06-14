@@ -193,8 +193,13 @@ export const DetailsComponent = ({ className }) => {
       dataIndex: "amount",
       key: "amount",
       render: (text) => {
+        const result = Number(text);
         return (
-          <span>{getNumberFormat(getNumberWithDecimal(Number(text), 1))}</span>
+          <span className={getNumberColor(result)}>
+            {isNaN(result)
+              ? "--"
+              : getNumberFormat(getNumberWithDecimal(result, 1))}
+          </span>
         );
       },
     },
