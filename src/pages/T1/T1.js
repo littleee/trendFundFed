@@ -21,16 +21,20 @@ export const T1Component = ({ className }) => {
   const [t1Data, setT1Data] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useParams();
+  const [ details, setDetails ] = useState([]);
 
   useEffect(() => {
     const fetchCharts = async () => {
-      const [{ data: t1 }, { data: handleBtc }] = await Promise.all([
+      const [{ data: t1 }, { data: handleBtc }, {data: details}] = await Promise.all([
         axios.get(
           `https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/t1/main.json`
         ),
         axios.get(
           `https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`
         ),
+        axios.get(
+          `https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/main.json`
+        )
       ]);
       setT1Data(t1);
 
@@ -47,6 +51,7 @@ export const T1Component = ({ className }) => {
       setT1Income(t1Income);
       setHandleIncome(handleIncome);
       setIsLoading(false);
+      setDetails(details)
     };
 
     fetchCharts();
@@ -204,7 +209,7 @@ export const T1Component = ({ className }) => {
   };
 
   const t1IncomeRate = getIncomeRate(t1Data);
-
+  const detailData = details.length > 0 ? details[details.length - 1] : [];
   return (
     <Layout className={className}>
       <Divider className="divider" />
@@ -219,7 +224,7 @@ export const T1Component = ({ className }) => {
                 <Col sm={8} xs={12}>
                   <Statistic
                     title="成立以来收益"
-                    value={t1IncomeRate}
+                    value={detailData[2] * 100 || 0}
                     precision={2}
                     suffix="%"
                     isNormal={false}
@@ -229,12 +234,12 @@ export const T1Component = ({ className }) => {
                   <Statistic
                     title={`最新净值（${
                       t1Data.length > 0
-                        ? dayjs(t1Data[t1Data.length - 1][0] * 1000).format(
+                        ? dayjs(detailData[0] * 1000).format(
                             "MM-DD"
                           )
                         : "--"
                     }）`}
-                    value={t1Data.length > 0 ? t1Data[t1Data.length - 1][1] : 0}
+                    value={detailData[1] || 0}
                     precision={4}
                     suffix="USD"
                   />
@@ -242,7 +247,7 @@ export const T1Component = ({ className }) => {
                 <Col sm={8} xs={24}>
                   <Statistic
                     title="昨日涨跌"
-                    value={getIncomeRate(t1Data, 1)}
+                    value={detailData[3]*100 || 0}
                     precision={2}
                     suffix="%"
                     isNormal={false}
@@ -258,7 +263,7 @@ export const T1Component = ({ className }) => {
                 <Col sm={6} xs={12}>
                   <Statistic
                     title="近1月涨跌"
-                    value={getIncomeRate(t1Data, 30)}
+                    value={detailData[4] * 100 || 0}
                     precision={2}
                     suffix="%"
                     isNormal={false}
@@ -267,7 +272,7 @@ export const T1Component = ({ className }) => {
                 <Col sm={6} xs={12}>
                   <Statistic
                     title="近3月涨跌"
-                    value={getIncomeRate(t1Data, 90)}
+                    value={detailData[5] * 100 || 0}
                     precision={2}
                     suffix="%"
                     isNormal={false}
