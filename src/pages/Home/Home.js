@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from "react";
 import footerIcon from "./footer.png";
 import bannerIcon from "./banner.png";
-import { Layout, Row, Divider, Card, Typography, Col, Tag } from "antd";
+import { Layout, Row, Divider, Card, Col, Tag } from "antd";
 import axios from "axios";
 import echarts from "echarts";
-import cn from "classnames";
 import styled from "styled-components";
-import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import {
-  getNumberColor,
   getNumberFormat,
-  getRunDays,
-  getIncomeRate,
   getNumberWithDecimal,
 } from "../../utils";
 import { Statistic, LineChart } from "../../components";
@@ -21,31 +16,27 @@ const { Content, Footer } = Layout;
 const HomeComponent = ({ className }) => {
   const [t1Income, setT1Income] = useState([]);
   const [handleIncome, setHandleIncome] = useState([]);
-  const [t1Data, setT1Data] = useState([]);
-  const [handleData, setHandleData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [ details, setDetails ] = useState([]);
+  const [ statistic, setStatistic ] = useState({});
 
   useEffect(() => {
     const fetchCharts = async () => {
-      const [{ data: t1 }, { data: handleBtc }, {data: details}] = await Promise.all([
-        axios.get(
-          `https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/t1/main.json`
-        ),
+      const [{ data: handleBtc }, {data: all}, {data: statisticData}] = await Promise.all([
         axios.get(
           `https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`
         ),
         axios.get(
-          `https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/main.json`
+          `https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/all.json`
+        ),
+        axios.get(
+          `https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/statistic.json`
         )
       ]);
-      setT1Data(t1);
-      setHandleData(handleBtc);
-      const startPriceByT1 = t1[0][1];
+      setStatistic(statisticData)
       const startPriceByHandle = handleBtc[0][1];
-      const t1Income = t1.map((x) => [
+      const t1Income = all.map((x) => [
         x[0] * 1000,
-        (x[1] / startPriceByT1 - 1) * 100,
+        x[2] * 100,
       ]);
       const handleIncome = handleBtc.map((x) => [
         x[0] * 1000,
@@ -54,7 +45,6 @@ const HomeComponent = ({ className }) => {
       setT1Income(t1Income);
       setHandleIncome(handleIncome);
       setIsLoading(false);
-      setDetails(details)
     };
 
     fetchCharts();
@@ -162,7 +152,6 @@ const HomeComponent = ({ className }) => {
       },
     ],
   };
-const detailData = details.length > 0 ? details[details.length - 1] : [];
   return (
     <Layout className={className}>
       <Divider className="divider" />
@@ -188,7 +177,7 @@ const detailData = details.length > 0 ? details[details.length - 1] : [];
                   <Col xs={12}>
                     <Statistic
                       title="成立以来收益"
-                      value={detailData[2] * 100 || 0}
+                      value={statistic.pnl_rate * 100 || 0}
                       precision={2}
                       suffix="%"
                       isNormal={false}
@@ -197,14 +186,13 @@ const detailData = details.length > 0 ? details[details.length - 1] : [];
                   <Col xs={12}>
                     <Statistic
                       title={`最新净值（${
-                        t1Data.length > 0
-                          ? dayjs(detailData[0] * 1000).format(
+                        statistic.timestamp ?
+                          dayjs(statistic.timestamp * 1000).format(
                               "MM-DD"
-                            )
-                          : "--"
+                            ) : '--'
                       }）`}
                       value={
-                        detailData[1] || 0
+                        statistic.pps || 0
                       }
                       precision={4}
                       suffix="USD"
@@ -215,7 +203,7 @@ const detailData = details.length > 0 ? details[details.length - 1] : [];
                   <Col xs={8}>
                     <Statistic
                       title="昨日涨跌"
-                      value={detailData[3]*100 || 0}
+                      value={statistic.last_day_pnl_rate * 100 || 0}
                       precision={2}
                       suffix="%"
                       isNormal={false}
@@ -224,7 +212,7 @@ const detailData = details.length > 0 ? details[details.length - 1] : [];
                   <Col xs={8}>
                     <Statistic
                       title="近1月涨跌"
-                      value={detailData[4] * 100 || 0}
+                      value={statistic.last_1m_pnl_rate * 100 || 0}
                       precision={2}
                       suffix="%"
                       isNormal={false}
@@ -233,7 +221,7 @@ const detailData = details.length > 0 ? details[details.length - 1] : [];
                   <Col xs={8}>
                     <Statistic
                       title="近3月涨跌"
-                      value={detailData[5] * 100 || 0}
+                      value={statistic.last_3m_pnl_rate * 100 || 0}
                       precision={2}
                       suffix="%"
                       isNormal={false}
@@ -244,7 +232,7 @@ const detailData = details.length > 0 ? details[details.length - 1] : [];
                   <Col xs={8}>
                     <Statistic
                       title="运行天数"
-                      value={getRunDays(t1Data)}
+                      value={statistic.running_days || 0}
                       precision={0}
                     />
                   </Col>
@@ -302,23 +290,21 @@ export const Home = styled(HomeComponent)`
   .title-wrapper {
     color: #fff;
     margin-top: -60px;
-  }
-
-  .title-wrapper .title {
-    font-size: 36px;
-    font-family: PingFang SC;
-    font-weight: 200;
-    color: rgba(255, 255, 255, 1);
-    margin-bottom: 17px;
-    text-align: center;
-  }
-
-  .title-wrapper .sub-title {
-    font-size: 16px;
-    font-family: PingFang SC;
-    font-weight: 200;
-    color: rgba(255, 255, 255, 1);
-    text-align: center;
+    .title {
+      font-size: 36px;
+      font-family: PingFang SC;
+      font-weight: 200;
+      color: rgba(255, 255, 255, 1);
+      margin-bottom: 17px;
+      text-align: center;
+    }
+    .sub-title {
+      font-size: 16px;
+      font-family: PingFang SC;
+      font-weight: 200;
+      color: rgba(255, 255, 255, 1);
+      text-align: center;
+    }
   }
 
   .card {
@@ -328,19 +314,18 @@ export const Home = styled(HomeComponent)`
     margin: -64px auto 0 auto;
     box-shadow: 0px 6px 13px 0px rgba(0, 0, 0, 0.03);
     border-radius: 6px;
-  }
-
-  .card-left {
-    padding: 0 20px;
-    margin-bottom: 20px;
-  }
-  .card-right {
-    padding: 0 20px;
-    border-left: 1px solid rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: space-around;
+    .card-left {
+      padding: 0 20px;
+      margin-bottom: 20px;
+    }
+    .card-right {
+      padding: 0 20px;
+      border-left: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: space-around;
+    }
   }
 
   .more {
@@ -353,40 +338,29 @@ export const Home = styled(HomeComponent)`
     text-align: center;
   }
 
-  .green {
-    color: #3f8600;
-  }
-  .red {
-    color: #cf1322;
-  }
-  .grey {
-    color: rgba(19, 24, 31, 0.6);
-  }
-
   .footer {
     background: rgb(14, 16, 20);
     text-align: center;
-  }
-  .footer-title {
-    font-size: 18px;
-    font-family: PingFang SC;
-    font-weight: 400;
-    color: rgba(255, 255, 255, 1);
-  }
+    .footer-title {
+      font-size: 18px;
+      font-family: PingFang SC;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 1);
+    }
+    .footer-subtitle {
+      font-size: 14px;
+      font-family: PingFang SC;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 1);
+      opacity: 0.6;
+      margin-bottom: 60px;
+    }
 
-  .footer-subtitle {
-    font-size: 14px;
-    font-family: PingFang SC;
-    font-weight: 400;
-    color: rgba(255, 255, 255, 1);
-    opacity: 0.6;
-    margin-bottom: 60px;
-  }
-
-  .footer-icon {
-    width: 100%;
-    max-width: 412px;
-    margin-bottom: 108px;
+    .footer-icon {
+      width: 100%;
+      max-width: 412px;
+      margin-bottom: 108px;
+    }
   }
 
   @media (max-width: 375px) {

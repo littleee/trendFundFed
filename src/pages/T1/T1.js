@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Row, Divider, Card, Typography, Col, Table, Tag } from "antd";
+import { Layout, Row, Divider, Card, Col, Table, Tag } from "antd";
 import axios from "axios";
 import echarts from "echarts";
 import { useParams } from "react-router-dom";
@@ -8,8 +8,6 @@ import dayjs from "dayjs";
 import {
   getNumberColor,
   getNumberFormat,
-  getRunDays,
-  getIncomeRate,
   getNumberWithDecimal,
 } from "../../utils";
 import { Statistic, LineChart } from "../../components";
@@ -21,28 +19,27 @@ export const T1Component = ({ className }) => {
   const [t1Data, setT1Data] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useParams();
-  const [ details, setDetails ] = useState([]);
+  const [ statistic, setStatistic ] = useState({});
 
   useEffect(() => {
     const fetchCharts = async () => {
-      const [{ data: t1 }, { data: handleBtc }, {data: details}] = await Promise.all([
-        axios.get(
-          `https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/t1/main.json`
-        ),
+      const [ { data: handleBtc }, {data: all}, {data: statisticData}] = await Promise.all([
         axios.get(
           `https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`
         ),
         axios.get(
-          `https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/main.json`
+          `https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/all.json`
+        ),
+        axios.get(
+          `https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/statistic.json`
         )
       ]);
-      setT1Data(t1);
-
+      setT1Data(all);
+      setStatistic(statisticData)
       const startPriceByHandle = handleBtc[0][1];
-      const startPriceByT1 = t1[0][1];
-      const t1Income = t1.map((x) => [
+      const t1Income = all.map((x) => [
         x[0] * 1000,
-        (x[1] / startPriceByT1 - 1) * 100,
+        x[2] * 100,
       ]);
       const handleIncome = handleBtc.map((x) => [
         x[0] * 1000,
@@ -51,7 +48,6 @@ export const T1Component = ({ className }) => {
       setT1Income(t1Income);
       setHandleIncome(handleIncome);
       setIsLoading(false);
-      setDetails(details)
     };
 
     fetchCharts();
@@ -185,37 +181,26 @@ export const T1Component = ({ className }) => {
 
   const dataSource = (data) => {
     if (data.length > 0) {
-      const result = data.reduce((acc, curr, index, arr) => {
-        const obj = {
-          date: dayjs(curr[0] * 1000).format("YYYY-MM-DD hh:mm:ss"),
-          value: getNumberWithDecimal(arr[index][1], 4),
-          cost: curr[2],
-          share: getNumberWithDecimal(curr[3], 0),
-          key: curr[0],
-          incomeRate:
-            index + 1 < arr.length
-              ? `${getNumberWithDecimal(
-                  (curr[1] / arr[index + 1][1] - 1) * 100,
-                  2
-                )}`
-              : 0,
-        };
-        return [...acc, obj];
-      }, []);
+      const result = data.map(x=>{
+        return {
+          date: dayjs(x[0] * 1000).format("YYYY-MM-DD hh:mm:ss"),
+          value: getNumberWithDecimal(x[1], 4),
+          incomeRate: x[3] * 100,
+          key: x[0]
+        }
+      })
       return result;
     } else {
       return [];
     }
   };
 
-  const t1IncomeRate = getIncomeRate(t1Data);
-  const detailData = details.length > 0 ? details[details.length - 1] : [];
   return (
     <Layout className={className}>
       <Divider className="divider" />
       <Content>
         <Row className="content" gutter={24}>
-          <Col sm={24} xs={24} className="content-left">
+          <Col sm={24} xs={24}>
             <Card
               title="T1 趋势跟踪策略"
               extra={<Tag color="green">运行中</Tag>}
@@ -224,7 +209,7 @@ export const T1Component = ({ className }) => {
                 <Col sm={8} xs={12}>
                   <Statistic
                     title="成立以来收益"
-                    value={detailData[2] * 100 || 0}
+                    value={statistic.pnl_rate * 100 || 0}
                     precision={2}
                     suffix="%"
                     isNormal={false}
@@ -233,13 +218,12 @@ export const T1Component = ({ className }) => {
                 <Col sm={8} xs={12}>
                   <Statistic
                     title={`最新净值（${
-                      t1Data.length > 0
-                        ? dayjs(detailData[0] * 1000).format(
+                      statistic.timestamp ?
+                        dayjs(statistic.timestamp * 1000).format(
                             "MM-DD"
-                          )
-                        : "--"
+                          ) : '--'
                     }）`}
-                    value={detailData[1] || 0}
+                    value={statistic.pps || 0}
                     precision={4}
                     suffix="USD"
                   />
@@ -247,7 +231,7 @@ export const T1Component = ({ className }) => {
                 <Col sm={8} xs={24}>
                   <Statistic
                     title="昨日涨跌"
-                    value={detailData[3]*100 || 0}
+                    value={statistic.last_day_pnl_rate * 100 || 0}
                     precision={2}
                     suffix="%"
                     isNormal={false}
@@ -263,7 +247,7 @@ export const T1Component = ({ className }) => {
                 <Col sm={6} xs={12}>
                   <Statistic
                     title="近1月涨跌"
-                    value={detailData[4] * 100 || 0}
+                    value={statistic.last_1m_pnl_rate * 100 || 0}
                     precision={2}
                     suffix="%"
                     isNormal={false}
@@ -272,7 +256,7 @@ export const T1Component = ({ className }) => {
                 <Col sm={6} xs={12}>
                   <Statistic
                     title="近3月涨跌"
-                    value={detailData[5] * 100 || 0}
+                    value={statistic.last_3m_pnl_rate * 100 || 0}
                     precision={2}
                     suffix="%"
                     isNormal={false}
@@ -281,7 +265,7 @@ export const T1Component = ({ className }) => {
                 <Col sm={6} xs={12}>
                   <Statistic
                     title="运行天数"
-                    value={getRunDays(t1Data)}
+                    value={statistic.running_days || 0}
                     precision={0}
                   />
                 </Col>
@@ -327,48 +311,5 @@ export const T1 = styled(T1Component)`
     padding-top: 40px;
     max-width: 1120px;
     margin: 0 auto !important;
-    .content-right {
-    }
-    .card {
-      .card-title-wrapper {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        padding: 15px 24px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-      .card-title {
-        font-size: 18px;
-        font-family: PingFang SC;
-        font-weight: 400;
-        color: rgba(19, 24, 31, 1);
-        padding-right: 6px;
-      }
-    }
-  }
-
-  .card .title-wrapper-left {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .card-left {
-    padding: 0 20px;
-  }
-
-  .green {
-    color: #3f8600;
-  }
-  .red {
-    color: #cf1322;
-  }
-  .grey {
-    color: rgba(19, 24, 31, 0.6);
-  }
-  @media (max-width: 375px) {
-    .card-left {
-      padding: 0;
-    }
   }
 `;
