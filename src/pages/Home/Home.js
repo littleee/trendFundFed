@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import footerIcon from "./footer.png";
 import bannerIcon from "./banner.png";
-import { Layout, Row, Divider, Card, Col, Tag } from "antd";
+import { Layout, Row, Divider, Card, Col, Tag, Radio } from "antd";
 import axios from "axios";
 import echarts from "echarts";
 import styled from "styled-components";
@@ -49,6 +49,30 @@ const HomeComponent = ({ className }) => {
 
     fetchCharts();
   }, []);
+
+  const pickDate = async (e) => {
+    const value = e.target.value;
+    const res = await axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${value}.json`)
+    const btcRes = await axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`)
+
+    const { status, data } = res;
+    if(status === 200) {
+      const line = data.map((x) => [
+        x[0] * 1000,
+        x[2] * 100,
+      ]);
+      setT1Income(line);
+      const startTime = data[0][0];
+      const btcData = btcRes.data
+      const btcDataWithTime = btcData.filter(x=>x[0] >= startTime);
+      console.log(btcDataWithTime);
+      const handleIncome = btcDataWithTime.map((x) => [
+        x[0] * 1000,
+        (x[1] / btcDataWithTime[0][1] - 1) * 100,
+      ]);
+      setHandleIncome(handleIncome);
+    }
+  }
 
   const option = {
     title: {
@@ -170,7 +194,14 @@ const HomeComponent = ({ className }) => {
           >
             <Row style={{ padding: "20px 0" }}>
               <Col sm={16} xs={24} className="card-left">
-                {<LineChart option={option} showLoading={isLoading} />}
+                <LineChart option={option} showLoading={isLoading} />
+                <Radio.Group defaultValue="all" buttonStyle="solid" onChange={pickDate} style={{marginTop: '10px'}}>
+                  <Radio.Button value="1m">近1月</Radio.Button>
+                  <Radio.Button value="3m">近3月</Radio.Button>
+                  <Radio.Button value="6m">近半年</Radio.Button>
+                  <Radio.Button value="12m">近1年</Radio.Button>
+                  <Radio.Button value="all">所有</Radio.Button>
+                </Radio.Group>
               </Col>
               <Col sm={8} xs={24} className="card-right">
                 <Row style={{ width: "100%" }}>
@@ -316,7 +347,10 @@ export const Home = styled(HomeComponent)`
     border-radius: 6px;
     .card-left {
       padding: 0 20px;
-      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
     .card-right {
       padding: 0 20px;

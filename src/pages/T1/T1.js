@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Row, Divider, Card, Col, Table, Tag } from "antd";
+import { Layout, Row, Divider, Card, Col, Table, Tag, Radio } from "antd";
 import axios from "axios";
 import echarts from "echarts";
 import { useParams } from "react-router-dom";
@@ -195,6 +195,30 @@ export const T1Component = ({ className }) => {
     }
   };
 
+  const pickDate = async (e) => {
+    const value = e.target.value;
+    const res = await axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${value}.json`)
+    const btcRes = await axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`)
+
+    const { status, data } = res;
+    if(status === 200) {
+      const line = data.map((x) => [
+        x[0] * 1000,
+        x[2] * 100,
+      ]);
+      setT1Income(line);
+      const startTime = data[0][0];
+      const btcData = btcRes.data
+      const btcDataWithTime = btcData.filter(x=>x[0] >= startTime);
+      console.log(btcDataWithTime);
+      const handleIncome = btcDataWithTime.map((x) => [
+        x[0] * 1000,
+        (x[1] / btcDataWithTime[0][1] - 1) * 100,
+      ]);
+      setHandleIncome(handleIncome);
+    }
+  }
+
   return (
     <Layout className={className}>
       <Divider className="divider" />
@@ -239,8 +263,15 @@ export const T1Component = ({ className }) => {
                 </Col>
               </Row>
               <Row style={{ marginTop: "24px" }}>
-                <Col xs={24}>
-                  {<LineChart option={option} showLoading={isLoading} />}
+                <Col xs={24} style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                  <LineChart option={option} showLoading={isLoading} />
+                  <Radio.Group defaultValue="all" buttonStyle="solid" onChange={pickDate} style={{marginTop: '10px'}}>
+                    <Radio.Button value="1m">近1月</Radio.Button>
+                    <Radio.Button value="3m">近3月</Radio.Button>
+                    <Radio.Button value="6m">近半年</Radio.Button>
+                    <Radio.Button value="12m">近1年</Radio.Button>
+                    <Radio.Button value="all">所有</Radio.Button>
+                  </Radio.Group>
                 </Col>
               </Row>
               <Row className="p-24">
