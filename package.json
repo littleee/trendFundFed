@@ -13,7 +13,7 @@
     "classnames": "^2.2.6",
     "dayjs": "^1.8.27",
     "echarts": "^4.7.0",
-    "echarts-for-react": "^2.0.15-beta.1",
+    "echarts-for-react": "^2.0.16",
     "history": "^4.10.1",
     "react": "^16.13.1",
     "react-app-rewired": "^2.1.6",
