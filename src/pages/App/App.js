@@ -31,7 +31,7 @@ const App = styled(({className}) => {
       <Header className="header">
         <Link to={`/`}>  <img src={logo} alt="logo" className="logo"/></Link>
         <Menu theme="dark" mode="horizontal" selectedKeys={hash}>
-          <Menu.Item key="#/t1" onClick={()=>navigate('/t1')}>T1 策略</Menu.Item>
+          <Menu.Item key="#/t1" onClick={()=>navigate('/t1')} styled={{color: '#fff'}}>T1 策略</Menu.Item>
         </Menu>
       </Header>
         <Routes>

@@ -22,9 +22,6 @@ export const isNumberGreaterThanZero = (value) => {
   return false;
 };
 
-export const getDataByDayFormat = (data) =>
-  data.filter((x) => new Date(x[0]).getHours() === 8);
-
 export const getRunDays = (data) => {
   const len = data.length;
   if (len > 0) {

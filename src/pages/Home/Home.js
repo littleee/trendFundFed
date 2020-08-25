@@ -19,6 +19,52 @@ const HomeComponent = ({ className }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [ statistic, setStatistic ] = useState({});
 
+useEffect(() => {
+  // i, i个物品
+  const value = [0, 1, 6, 18, 22, 28];
+  const weight = [0,1,2,5,6,7];
+  var length = 6
+  var arr =  new Array(6);
+  for(var i = 0;i < arr.length; i++){
+     arr[i] = new Array(12);
+  }
+
+  const memoized = (v,w,rongliang) => {
+    for(let i=0; i < length; i++){
+      for(let j =0;j <=rongliang; j++){
+        arr[i][j] = -1
+      }
+    }
+    console.log(arr);
+
+    return calc(v,w,5,rongliang)
+  }
+
+  const calc = (v,w,i,rongliang) => {
+    let temp = 0
+    if(arr[i][rongliang] !== -1){
+      return arr[i][rongliang]
+    }
+    if(i === 0 || rongliang === 0){
+      //没物品或者容量是0, 最大价值为0
+      return  arr[i][rongliang] = 0
+    } else {
+      arr[i][rongliang] = calc(v,w,i-1,rongliang)
+      if(i>0 && rongliang >= w[i]){
+        temp = calc(v,w,i-1,rongliang - w[i]) + v[i]
+        if(arr[i][rongliang] < temp){
+          arr[i][rongliang] = temp
+        }
+      }
+    }
+    return arr[i][rongliang]
+  }
+
+  console.log(2,memoized(value, weight, 11))
+}, [])
+
+
+
   useEffect(() => {
     const fetchCharts = async () => {
       const [{ data: handleBtc }, {data: all}, {data: statisticData}] = await Promise.all([
@@ -32,6 +78,14 @@ const HomeComponent = ({ className }) => {
           `https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/statistic.json`
         )
       ]);
+      // var ws = new WebSocket("wss://www.bitmex.com/realtime?subscribe=instrument,quoteBin1m:XBTUSD")
+      // // ws.send("我是客户端发送的数据")
+      // ws.onmessage = function(event){
+      //   const data = event.data;
+      //     console.log(JSON.parse(data))
+      // }
+      // const btcPrice = await axios.get(`https://www.bitmex.com/api/udf/history?symbol=XBTUSD&resolution=5&from=1595240610&to=1596536670`)
+      //   console.log(btcPrice)
       setStatistic(statisticData)
       const startPriceByHandle = handleBtc[0][1];
       const t1Income = all.map((x) => [
@@ -65,7 +119,7 @@ const HomeComponent = ({ className }) => {
       const startTime = data[0][0];
       const btcData = btcRes.data
       const btcDataWithTime = btcData.filter(x=>x[0] >= startTime);
-      console.log(btcDataWithTime);
+      // console.log(btcDataWithTime);
       const handleIncome = btcDataWithTime.map((x) => [
         x[0] * 1000,
         (x[1] / btcDataWithTime[0][1] - 1) * 100,
@@ -180,12 +234,6 @@ const HomeComponent = ({ className }) => {
     <Layout className={className}>
       <Divider className="divider" />
       <Content>
-        <Row className="banner">
-          <div className="title-wrapper">
-            <p className="title">趋势中的数字黄金</p>
-            <p className="sub-title">加密货币CTA策略</p>
-          </div>
-        </Row>
         <Row className="content">
           <Card
             className="card"
@@ -279,22 +327,8 @@ const HomeComponent = ({ className }) => {
             </Row>
           </Card>
         </Row>
-
-        <p className="more">更多产品 敬请期待</p>
       </Content>
-      <Footer className="footer">
-        <p className="footer-title">关于 TrendFund</p>
-        <p className="footer-subtitle">
-          TrendFund
-          成立于2017年，专注于加密资产的量化交易研究。团队成员均为业内顶尖产品经理、分析师、交易员、工程师等。
-        </p>
-        <img
-          className="footer-icon"
-          src={footerIcon}
-          alt="footer details"
-          draggable="false"
-        />
-      </Footer>
+
     </Layout>
   );
 };
@@ -403,3 +437,36 @@ export const Home = styled(HomeComponent)`
     }
   }
 `;
+// 
+//
+//
+//
+// class Parent {
+//     constructor(name, age) {
+//         this.name = name;
+//         this.age = age;
+//     }
+//     sayName() {
+//         console.log(this.name);
+//     }
+// };
+//
+// Parent.prototype.sayAge = function (){
+//   console.log(this.age)
+// }
+// const child = new Parent('名字', 26);
+// child.sayName()
+// child.sayAge()
+// console.log(child.constructor);
+// console.log(child.__proto__.constructor)
+// console.log(Parent.prototype);
+//
+//
+// class B {}
+// let b = new B();
+//
+// console.log(b.constructor === B.prototype.constructor)
+// console.log(b.hasOwnProperty('constructor'))
+// console.log(b.__proto__.hasOwnProperty('constructor'))
+// console.log(B.hasOwnProperty('constructor'))
+//  // true
