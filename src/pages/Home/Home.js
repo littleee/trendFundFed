@@ -18,10 +18,11 @@ const HomeComponent = ({ className }) => {
   const [handleIncome, setHandleIncome] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [ statistic, setStatistic ] = useState({});
+  const [metrics, setMetrics] = useState({});
 
   useEffect(() => {
     const fetchCharts = async () => {
-      const [{ data: handleBtc }, {data: all}, {data: statisticData}] = await Promise.all([
+      const [{ data: handleBtc }, {data: all}, {data: statisticData}, {data: metricsData}] = await Promise.all([
         axios.get(
           `https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`
         ),
@@ -30,9 +31,11 @@ const HomeComponent = ({ className }) => {
         ),
         axios.get(
           `https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/statistic.json`
-        )
+        ),
+        axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/metrics.json`)
       ]);
       setStatistic(statisticData)
+      setMetrics(metricsData)
       const startPriceByHandle = handleBtc[0][1];
       const t1Income = all.map((x) => [
         x[0] * 1000,
@@ -52,8 +55,10 @@ const HomeComponent = ({ className }) => {
 
   const pickDate = async (e) => {
     const value = e.target.value;
-    const res = await axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${value}.json`)
-    const btcRes = await axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`)
+    const [res, btcRes] = await Promise.all([
+      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${value}.json`),
+      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`)
+    ])
 
     const { status, data } = res;
     if(status === 200) {
@@ -61,15 +66,14 @@ const HomeComponent = ({ className }) => {
         x[0] * 1000,
         x[2] * 100,
       ]);
-      setT1Income(line);
       const startTime = data[0][0];
       const btcData = btcRes.data
       const btcDataWithTime = btcData.filter(x=>x[0] >= startTime);
-      console.log(btcDataWithTime);
       const handleIncome = btcDataWithTime.map((x) => [
         x[0] * 1000,
         (x[1] / btcDataWithTime[0][1] - 1) * 100,
       ]);
+      setT1Income(line);
       setHandleIncome(handleIncome);
     }
   }
@@ -78,6 +82,7 @@ const HomeComponent = ({ className }) => {
     title: {
       text: "业绩走势",
     },
+    animation: true,
     tooltip: {
       trigger: "axis",
       formatter: function (params) {
@@ -176,6 +181,7 @@ const HomeComponent = ({ className }) => {
       },
     ],
   };
+  console.log('render', handleIncome, t1Income);
   return (
     <Layout className={className}>
       <Divider className="divider" />
@@ -189,8 +195,8 @@ const HomeComponent = ({ className }) => {
         <Row className="content">
           <Card
             className="card"
-            title="T1 趋势跟踪策略"
-            extra={<Tag color="green">运行中</Tag>}
+            title={<div style={{display: 'flex', alignItems: 'center'}}><span style={{marginRight: '20px'}}>T1 趋势跟踪策略</span><Tag color="green">运行中</Tag></div>}
+            extra={<a href="#/t1" className="details-link">策略详情 ></a>}
           >
             <Row style={{ padding: "20px 0" }}>
               <Col sm={16} xs={24} className="card-left">
@@ -207,8 +213,8 @@ const HomeComponent = ({ className }) => {
                 <Row style={{ width: "100%" }}>
                   <Col xs={12}>
                     <Statistic
-                      title="成立以来收益"
-                      value={statistic.pnl_rate * 100 || 0}
+                      title="历史年化收益率"
+                      value={(metrics.strategy && (metrics.strategy.annual_return * 100).toFixed(2)) || 0}
                       precision={2}
                       suffix="%"
                       isNormal={false}
@@ -231,7 +237,16 @@ const HomeComponent = ({ className }) => {
                   </Col>
                 </Row>
                 <Row style={{ width: "100%" }}>
-                  <Col xs={8}>
+                  <Col xs={12}>
+                    <Statistic
+                      title="成立以来收益率"
+                      value={statistic.pnl_rate * 100 || 0}
+                      precision={2}
+                      suffix="%"
+                      isNormal={false}
+                    />
+                  </Col>
+                  <Col xs={12}>
                     <Statistic
                       title="昨日涨跌"
                       value={statistic.last_day_pnl_rate * 100 || 0}
@@ -240,37 +255,18 @@ const HomeComponent = ({ className }) => {
                       isNormal={false}
                     />
                   </Col>
-                  <Col xs={8}>
-                    <Statistic
-                      title="近1月涨跌"
-                      value={statistic.last_1m_pnl_rate * 100 || 0}
-                      precision={2}
-                      suffix="%"
-                      isNormal={false}
-                    />
-                  </Col>
-                  <Col xs={8}>
-                    <Statistic
-                      title="近3月涨跌"
-                      value={statistic.last_3m_pnl_rate * 100 || 0}
-                      precision={2}
-                      suffix="%"
-                      isNormal={false}
-                    />
-                  </Col>
                 </Row>
                 <Row style={{ width: "100%" }}>
-                  <Col xs={8}>
+                  <Col xs={12}>
                     <Statistic
-                      title="运行天数"
-                      value={statistic.running_days || 0}
-                      precision={0}
+                      title="价值本位"
+                      value="USD"
                     />
                   </Col>
-                  <Col xs={16}>
+                  <Col xs={12}>
                     <Statistic
-                      title="交易标的"
-                      value="BTCUSD 永续合约"
+                      title="策略类型"
+                      value="CTA 策略"
                       precision={0}
                     />
                   </Col>
@@ -359,6 +355,9 @@ export const Home = styled(HomeComponent)`
       align-items: center;
       flex-direction: column;
       justify-content: space-around;
+    }
+    .details-link {
+      color: rgba(0, 0, 0, 0.45);
     }
   }
 
