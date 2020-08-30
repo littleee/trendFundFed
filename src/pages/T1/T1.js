@@ -317,7 +317,7 @@ export const T1Component = ({ className }) => {
                   {(metrics.strategy && (metrics.strategy.sharpe_ratio).toFixed(2)) || '--'}
                 </Descriptions.Item>
                 <Descriptions.Item label="索提诺比率">{(metrics.strategy && (metrics.strategy.sortino_ratio).toFixed(2)) || '--'}</Descriptions.Item>
-                <Descriptions.Item label="最大回撤率">{(metrics.strategy && (metrics.strategy.max_drawdown).toFixed(2)) || '--'}</Descriptions.Item>
+                <Descriptions.Item label="最大回撤率">{`${(metrics.strategy && (metrics.strategy.max_drawdown * 100).toFixed(2))} %` || '--'}</Descriptions.Item>
               </Descriptions>
               </Card>
             </Col>
