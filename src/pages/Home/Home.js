@@ -11,6 +11,7 @@ import {
   getNumberWithDecimal,
 } from "../../utils";
 import { Statistic, LineChart } from "../../components";
+
 const { Content, Footer } = Layout;
 
 const HomeComponent = ({ className }) => {

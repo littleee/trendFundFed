@@ -1,5 +1,6 @@
 import React from "react";
-import ReactEcharts from "echarts-for-react";
+// import ReactEcharts from "echarts-for-react";
+import { ReactEcharts } from "packages/ReactEcharts";
 
 export const LineChart = ({ option, showLoading = true }) => {
   const getLoadingOption = () => {
