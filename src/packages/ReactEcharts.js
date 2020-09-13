@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import echarts from 'echarts'
+import useResizeObserver from '@react-hook/resize-observer'
 
 export const ReactEcharts = ({className = "", style={}, option = {}, ...rest}) => {
   const chartsEl = useRef(null)
@@ -10,6 +11,11 @@ export const ReactEcharts = ({className = "", style={}, option = {}, ...rest}) =
       echarts.dispose(instance)
     }
   },[option, chartsEl])
+
+  useResizeObserver(chartsEl, (entry) => {
+    const instance = echarts.getInstanceByDom(chartsEl.current) || echarts.init(chartsEl.current);
+    instance.resize()
+  })
   return (
     <div
       ref={chartsEl}
