@@ -359,8 +359,8 @@ export const T1Component = ({ className }) => {
               <Title level={5}  className='title-p-t-10'>利润分配</Title>
               <Col sm={16} xs={24}>
               <Descriptions bordered column={1} size='small'>
-                <Descriptions.Item label="项目运作人">50%</Descriptions.Item>
-                <Descriptions.Item label="份额持有人">50%</Descriptions.Item>
+                <Descriptions.Item label="项目运作人">咨询</Descriptions.Item>
+                <Descriptions.Item label="份额持有人">咨询</Descriptions.Item>
               </Descriptions>
               </Col>
               <Title level={5}  className='title-p-t-10'>收费标准</Title>
@@ -368,8 +368,8 @@ export const T1Component = ({ className }) => {
               <Descriptions bordered column={1} size='small'>
                 <Descriptions.Item label="认购费用">免费</Descriptions.Item>
                 <Descriptions.Item label="赎回费用">免费</Descriptions.Item>
-                <Descriptions.Item label="管理费用">2% (年化)</Descriptions.Item>
-                <Descriptions.Item label="托管费用">2% (年化)</Descriptions.Item>
+                <Descriptions.Item label="管理费用">1% (年化)</Descriptions.Item>
+                <Descriptions.Item label="托管费用">1% (年化)</Descriptions.Item>
               </Descriptions>
               </Col>
               <Title level={5}  className='title-p-t-10'>免责声明</Title>
