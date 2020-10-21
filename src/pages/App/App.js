@@ -9,6 +9,7 @@ import {
   useNavigate
 } from 'react-router-dom';
 import styled from 'styled-components';
+import Dashboard from 'pages/Dashboard';
 
 const Home = lazy(() => import('../Home'))
 const Details = lazy(() => import('../Details'))
@@ -38,6 +39,7 @@ const App = styled(({className}) => {
           <Route path="/" element={<Home />} />
           <Route path="t1" exact element={<T1 />} />
           <Route path="account/:user" element={<Details />} />
+          <Route path="dashboard" element={<Dashboard />} />
         </Routes>
     </Suspense>
     </Layout>

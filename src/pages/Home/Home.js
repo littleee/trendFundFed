@@ -52,6 +52,51 @@ const HomeComponent = ({ className }) => {
     };
 
     fetchCharts();
+
+    // var ws = new WebSocket("wss://ftx.com/ws/");
+    // var wss = new WebSocket("wss://echo.websocket.org");
+
+//     ws.onopen = function(evt) { 
+//       console.log("Connection open ...");
+//       // const hmac = crypto.createHmac('sha256', 'secret-key');
+//     let hash = CryptoJS.HmacSHA256(`${+new Date() - 8 * 60 * 60 * 1000}websocket_login`,'pS39_AF6qh3gN1jqiqSIID792YTqQgMrCskPoIcH');
+//     const sign = CryptoJS.enc.Hex.stringify(hash)
+
+//     const date = +new Date;
+//     const signature = crypto.createHmac('sha256', 'pS39_AF6qh3gN1jqiqSIID792YTqQgMrCskPoIcH')
+//       .update(date + 'websocket_login').digest('hex');
+
+//     console.log(3,sign, date, signature)
+//       ws.send(JSON.stringify({
+//         'op': 'login',
+//         'args': {
+//           "subaccount": null,
+//           'key': 'FKxofdboSzIYNgjfjp3yRVUkil_ER71eB_4eyfHE',
+//           'sign': sign,
+//           'time': +new Date() - 8 * 60 * 60 * 1000,
+//         }
+//       }));
+
+//       setInterval(() => {
+//         console.log(4555)
+//         ws.send(JSON.stringify({'op': 'ping'}))
+//       }, 15000)
+
+// ws.send(JSON.stringify({
+//  'channel': "orderbook",
+// 'market': "BTC-PERP",
+// 'op': "subscribe"}))
+//  ws.send(JSON.stringify({'type': 'subscribed', 'channel': 'trades', 'market': 'BTC-PERP'}))
+    // };
+
+    // ws.onmessage = function(evt) {
+    //   console.log( "Received Message: " + evt.data);
+    //   // ws.close();
+    // };
+
+    // ws.onclose = function(evt) {
+    //   console.log("Connection closed.");
+    // };
   }, []);
 
   const pickDate = async (e) => {
@@ -182,7 +227,6 @@ const HomeComponent = ({ className }) => {
       },
     ],
   };
-  console.log('render', handleIncome, t1Income);
   return (
     <Layout className={className}>
       <Divider className="divider" />
