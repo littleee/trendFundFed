@@ -124,7 +124,7 @@ useEffect(() => {
         setFtx(ftxRes)
     };
     const timer = setInterval(() => {
-       fetchCharts();
+      fetchCharts();
     }, 5000);
 
     return () => clearInterval(timer)
@@ -144,26 +144,27 @@ useEffect(() => {
               </Descriptions>
               </Card>
 
-    <div> Binance 资产  总：{binanceAssets.marginBalance}</div>
+    <div> Binance 资产</div>
             <Table
                 columns={binanceAccountColumns}
                 dataSource={binanceAccountData}
-                rowKey={row => row.walletBalance}
+                pagination={false}
             />
             <Table
                 columns={binancePositionColumns}
                 dataSource={binancePositionData}
-                rowKey={row=>row.symbol}
+                pagination={false}
             />
-            
             <div>FTX 资产</div>
             <Table
                 columns={ftxAccounntColumns}
                 dataSource={ftxAssets}
+                pagination={false}
             />
             <Table
                 columns={ftxPositionColumns}
                 dataSource={ftxPosition}
+                pagination={false}
             />
         </div>
     )
