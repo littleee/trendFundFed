@@ -108,21 +108,33 @@ const ftxAccounntColumns = [
 export const Dashboard = () => {
     const [binance, setBinance] = useState({})
     const [ftx, setFtx] = useState({})
+    const [deribit, setDeribit] = useState({})
+
 useEffect(() => {
     const fetchCharts = async () => {
-        const { data: positions } = await axios.get('http://littleee.com/api/position')
-        const { binance, ftx } = positions.data;
-        const binanceRes = {
-            position: binance.info.positions.find(x=>x.symbol === 'BTCUSD_PERP'),
-            assets: binance.info.assets.find(x => x.asset === 'BTC')
+      const [{ data: ftxRes }, { data: deribitRes }, { data: binanceRes } ] = await Promise.all([
+        axios.get('http://littleee.com/api/ftxInfo'),
+        axios.get('http://littleee.com/api/deribitInfo'),
+        axios.get('http://littleee.com/api/binanceInfo'),
+      ])
+        const ftxInfo = {
+          position: ftxRes.positions.result,
+          assets: ftxRes.balance.info.result
         }
-        setBinance(binanceRes)
-        const ftxRes = {
-            position: ftx.positions.result,
-            assets: ftx.balance.info.result
+        console.log(deribitRes)
+        const binanceInfo = {
+            position: binanceRes.result.info.positions.find(x=>x.symbol === 'BTCUSD_PERP'),
+            assets: binanceRes.result.info.assets.find(x => x.asset === 'BTC')
         }
-        setFtx(ftxRes)
+        const deribitInfo = {
+          position: deribitRes.positions.result,
+          assets: deribitRes.balance.info.result,
+        }
+        setBinance(binanceInfo)
+        setFtx(ftxInfo)
+        setDeribit(deribitInfo)
     };
+    fetchCharts();
     const timer = setInterval(() => {
       fetchCharts();
     }, 5000);
@@ -131,6 +143,8 @@ useEffect(() => {
 }, [])
     const { position: binancePosition = {}, assets: binanceAssets = {} } = binance;
     const { position: ftxPosition = [], assets: ftxAssets = [] } = ftx;
+    const { position: deribitPosition = {}, assets: deribitAssets = {} } = deribit;
+    console.log(444,deribitPosition)
     const binanceAccountData = [binanceAssets];
     const binancePositionData = [binancePosition]
     const getFtxByCurrency = currency => ftxAssets.find(x=>x.coin === currency) || {total: 0};
@@ -166,6 +180,23 @@ useEffect(() => {
                 dataSource={ftxPosition}
                 pagination={false}
             />
+            <Card title="Deribit资产">
+              <Descriptions bordered column={1} size='small'>
+                <Descriptions.Item label="账户资产净值">{deribitAssets.equity}</Descriptions.Item>
+                <Descriptions.Item label="可用余额">{deribitAssets.available_funds}</Descriptions.Item>
+                <Descriptions.Item label="保证金余额">{deribitAssets.margin_balance}</Descriptions.Item>
+                <Descriptions.Item label="未实现盈亏">{deribitAssets.futures_pl}</Descriptions.Item>
+              </Descriptions>
+            </Card>
+            <Card title="Deribit仓位">
+              <Descriptions bordered column={1} size='small'>
+                <Descriptions.Item label="交易品种">{deribitPosition.instrument_name}</Descriptions.Item>
+                <Descriptions.Item label="仓位(USD)">{deribitPosition.size}</Descriptions.Item>
+                <Descriptions.Item label="大小">{deribitPosition.size_currency}</Descriptions.Item>
+                <Descriptions.Item label="持仓均价">{deribitPosition.average_price}</Descriptions.Item>
+                <Descriptions.Item label="未实现盈亏">{deribitPosition.floating_profit_loss}</Descriptions.Item>
+              </Descriptions>
+            </Card>
         </div>
     )
 }
