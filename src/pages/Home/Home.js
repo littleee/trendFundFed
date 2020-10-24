@@ -241,7 +241,7 @@ const HomeComponent = ({ className }) => {
           <Card
             className="card"
             title={<div style={{display: 'flex', alignItems: 'center'}}><span style={{marginRight: '20px'}}>T1 趋势跟踪策略</span><Tag color="green">运行中</Tag></div>}
-            extra={<a href="#/t1" className="details-link">策略详情 ></a>}
+            extra={<a href="#/t1" className="details-link">策略详情 >></a>}
           >
             <Row style={{ padding: "20px 0" }}>
               <Col sm={16} xs={24} className="card-left">
