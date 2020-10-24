@@ -250,7 +250,7 @@ const HomeComponent = ({ className }) => {
             }
             extra={
               <a href="#/t1" className="details-link">
-                策略详情 >>1
+                策略详情 >
               </a>
             }
           >
