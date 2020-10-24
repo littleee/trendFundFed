@@ -19,9 +19,10 @@ jobs:
           script: |
             cd /root/trendFundFed
             git pull
+            yarn
             yarn build
             cd /root/tgdog.github.io
-            scp -r /root/trendFundFed/build/. ./
+            cp -r /root/trendFundFed/build/. ./
             git add .
             git commit -m"update"
             git push origin master
