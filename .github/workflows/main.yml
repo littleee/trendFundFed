@@ -18,6 +18,7 @@ jobs:
           password: ${{ secrets.ALI_PASSWORD }}
           script: |
             cd /root/trendFundFed
+            git pull
             yarn build
             cd /root/tgdog.github.io
             scp -r /root/trendFundFed/build/. ./
