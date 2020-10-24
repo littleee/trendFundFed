@@ -6,10 +6,7 @@ import axios from "axios";
 import echarts from "echarts";
 import styled from "styled-components";
 import dayjs from "dayjs";
-import {
-  getNumberFormat,
-  getNumberWithDecimal,
-} from "../../utils";
+import { getNumberFormat, getNumberWithDecimal } from "../../utils";
 import { Statistic, LineChart } from "../../components";
 
 const { Content, Footer } = Layout;
@@ -18,12 +15,17 @@ const HomeComponent = ({ className }) => {
   const [t1Income, setT1Income] = useState([]);
   const [handleIncome, setHandleIncome] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [ statistic, setStatistic ] = useState({});
+  const [statistic, setStatistic] = useState({});
   const [metrics, setMetrics] = useState({});
 
   useEffect(() => {
     const fetchCharts = async () => {
-      const [{ data: handleBtc }, {data: all}, {data: statisticData}, {data: metricsData}] = await Promise.all([
+      const [
+        { data: handleBtc },
+        { data: all },
+        { data: statisticData },
+        { data: metricsData },
+      ] = await Promise.all([
         axios.get(
           `https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`
         ),
@@ -33,15 +35,14 @@ const HomeComponent = ({ className }) => {
         axios.get(
           `https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/statistic.json`
         ),
-        axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/metrics.json`)
+        axios.get(
+          `https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/metrics.json`
+        ),
       ]);
-      setStatistic(statisticData)
-      setMetrics(metricsData)
+      setStatistic(statisticData);
+      setMetrics(metricsData);
       const startPriceByHandle = handleBtc[0][1];
-      const t1Income = all.map((x) => [
-        x[0] * 1000,
-        x[2] * 100,
-      ]);
+      const t1Income = all.map((x) => [x[0] * 1000, x[2] * 100]);
       const handleIncome = handleBtc.map((x) => [
         x[0] * 1000,
         (x[1] / startPriceByHandle - 1) * 100,
@@ -56,37 +57,37 @@ const HomeComponent = ({ className }) => {
     // var ws = new WebSocket("wss://ftx.com/ws/");
     // var wss = new WebSocket("wss://echo.websocket.org");
 
-//     ws.onopen = function(evt) { 
-//       console.log("Connection open ...");
-//       // const hmac = crypto.createHmac('sha256', 'secret-key');
-//     let hash = CryptoJS.HmacSHA256(`${+new Date() - 8 * 60 * 60 * 1000}websocket_login`,'pS39_AF6qh3gN1jqiqSIID792YTqQgMrCskPoIcH');
-//     const sign = CryptoJS.enc.Hex.stringify(hash)
+    //     ws.onopen = function(evt) {
+    //       console.log("Connection open ...");
+    //       // const hmac = crypto.createHmac('sha256', 'secret-key');
+    //     let hash = CryptoJS.HmacSHA256(`${+new Date() - 8 * 60 * 60 * 1000}websocket_login`,'pS39_AF6qh3gN1jqiqSIID792YTqQgMrCskPoIcH');
+    //     const sign = CryptoJS.enc.Hex.stringify(hash)
 
-//     const date = +new Date;
-//     const signature = crypto.createHmac('sha256', 'pS39_AF6qh3gN1jqiqSIID792YTqQgMrCskPoIcH')
-//       .update(date + 'websocket_login').digest('hex');
+    //     const date = +new Date;
+    //     const signature = crypto.createHmac('sha256', 'pS39_AF6qh3gN1jqiqSIID792YTqQgMrCskPoIcH')
+    //       .update(date + 'websocket_login').digest('hex');
 
-//     console.log(3,sign, date, signature)
-//       ws.send(JSON.stringify({
-//         'op': 'login',
-//         'args': {
-//           "subaccount": null,
-//           'key': 'FKxofdboSzIYNgjfjp3yRVUkil_ER71eB_4eyfHE',
-//           'sign': sign,
-//           'time': +new Date() - 8 * 60 * 60 * 1000,
-//         }
-//       }));
+    //     console.log(3,sign, date, signature)
+    //       ws.send(JSON.stringify({
+    //         'op': 'login',
+    //         'args': {
+    //           "subaccount": null,
+    //           'key': 'FKxofdboSzIYNgjfjp3yRVUkil_ER71eB_4eyfHE',
+    //           'sign': sign,
+    //           'time': +new Date() - 8 * 60 * 60 * 1000,
+    //         }
+    //       }));
 
-//       setInterval(() => {
-//         console.log(4555)
-//         ws.send(JSON.stringify({'op': 'ping'}))
-//       }, 15000)
+    //       setInterval(() => {
+    //         console.log(4555)
+    //         ws.send(JSON.stringify({'op': 'ping'}))
+    //       }, 15000)
 
-// ws.send(JSON.stringify({
-//  'channel': "orderbook",
-// 'market': "BTC-PERP",
-// 'op': "subscribe"}))
-//  ws.send(JSON.stringify({'type': 'subscribed', 'channel': 'trades', 'market': 'BTC-PERP'}))
+    // ws.send(JSON.stringify({
+    //  'channel': "orderbook",
+    // 'market': "BTC-PERP",
+    // 'op': "subscribe"}))
+    //  ws.send(JSON.stringify({'type': 'subscribed', 'channel': 'trades', 'market': 'BTC-PERP'}))
     // };
 
     // ws.onmessage = function(evt) {
@@ -102,19 +103,20 @@ const HomeComponent = ({ className }) => {
   const pickDate = async (e) => {
     const value = e.target.value;
     const [res, btcRes] = await Promise.all([
-      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${value}.json`),
-      axios.get(`https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`)
-    ])
+      axios.get(
+        `https://raw.githubusercontent.com/odofmine/ocd/master/fund/__t1__/${value}.json`
+      ),
+      axios.get(
+        `https://raw.githubusercontent.com/odofmine/ocd/master/t1/btc_price/2020-05.json`
+      ),
+    ]);
 
     const { status, data } = res;
-    if(status === 200) {
-      const line = data.map((x) => [
-        x[0] * 1000,
-        x[2] * 100,
-      ]);
+    if (status === 200) {
+      const line = data.map((x) => [x[0] * 1000, x[2] * 100]);
       const startTime = data[0][0];
-      const btcData = btcRes.data
-      const btcDataWithTime = btcData.filter(x=>x[0] >= startTime);
+      const btcData = btcRes.data;
+      const btcDataWithTime = btcData.filter((x) => x[0] >= startTime);
       const handleIncome = btcDataWithTime.map((x) => [
         x[0] * 1000,
         (x[1] / btcDataWithTime[0][1] - 1) * 100,
@@ -122,7 +124,7 @@ const HomeComponent = ({ className }) => {
       setT1Income(line);
       setHandleIncome(handleIncome);
     }
-  }
+  };
 
   const option = {
     title: {
@@ -240,13 +242,27 @@ const HomeComponent = ({ className }) => {
         <Row className="content">
           <Card
             className="card"
-            title={<div style={{display: 'flex', alignItems: 'center'}}><span style={{marginRight: '20px'}}>T1 趋势跟踪策略</span><Tag color="green">运行中</Tag></div>}
-            extra={<a href="#/t1" className="details-link">策略详情 >></a>}
+            title={
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <span style={{ marginRight: "20px" }}>T1 趋势跟踪策略</span>
+                <Tag color="green">运行中</Tag>
+              </div>
+            }
+            extra={
+              <a href="#/t1" className="details-link">
+                策略详情 >>1
+              </a>
+            }
           >
             <Row style={{ padding: "20px 0" }}>
               <Col sm={16} xs={24} className="card-left">
                 <LineChart option={option} showLoading={isLoading} />
-                <Radio.Group defaultValue="all" buttonStyle="solid" onChange={pickDate} style={{marginTop: '10px'}}>
+                <Radio.Group
+                  defaultValue="all"
+                  buttonStyle="solid"
+                  onChange={pickDate}
+                  style={{ marginTop: "10px" }}
+                >
                   <Radio.Button value="1m">近1月</Radio.Button>
                   <Radio.Button value="3m">近3月</Radio.Button>
                   <Radio.Button value="6m">近半年</Radio.Button>
@@ -259,7 +275,11 @@ const HomeComponent = ({ className }) => {
                   <Col xs={12}>
                     <Statistic
                       title="历史年化收益率"
-                      value={(metrics.strategy && (metrics.strategy.annual_return * 100).toFixed(2)) || 0}
+                      value={
+                        (metrics.strategy &&
+                          (metrics.strategy.annual_return * 100).toFixed(2)) ||
+                        0
+                      }
                       precision={2}
                       suffix="%"
                       isNormal={false}
@@ -268,14 +288,11 @@ const HomeComponent = ({ className }) => {
                   <Col xs={12}>
                     <Statistic
                       title={`最新净值（${
-                        statistic.timestamp ?
-                          dayjs(statistic.timestamp * 1000).format(
-                              "MM-DD"
-                            ) : '--'
+                        statistic.timestamp
+                          ? dayjs(statistic.timestamp * 1000).format("MM-DD")
+                          : "--"
                       }）`}
-                      value={
-                        statistic.pps || 0
-                      }
+                      value={statistic.pps || 0}
                       precision={4}
                       suffix="USD"
                     />
@@ -303,10 +320,7 @@ const HomeComponent = ({ className }) => {
                 </Row>
                 <Row style={{ width: "100%" }}>
                   <Col xs={12}>
-                    <Statistic
-                      title="价值本位"
-                      value="USD"
-                    />
+                    <Statistic title="价值本位" value="USD" />
                   </Col>
                   <Col xs={12}>
                     <Statistic
