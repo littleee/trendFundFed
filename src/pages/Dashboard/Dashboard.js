@@ -44,7 +44,7 @@ export const Dashboard = () => {
 
   console.log(new Date().toISOString());
   return (
-    <div style={{ padding: "50px" }}>
+    <div>
       <Card title="T1 总资产">
         <Descriptions bordered column={1} size="small">
           <Descriptions.Item label="USD">{ftx[5]}</Descriptions.Item>
@@ -59,7 +59,7 @@ export const Dashboard = () => {
         </Descriptions>
       </Card>
       <Row>
-        <Col span={8}>
+        <Col sm={8} xs={24}>
           <Card title="Binance 资产">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="钱包余额(btc)">
@@ -99,7 +99,7 @@ export const Dashboard = () => {
             </Descriptions>
           </Card>
         </Col>
-        <Col span={8}>
+        <Col sm={8} xs={24}>
           <Card title="FTX 仓位">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="钱包余额(btc)">
@@ -125,7 +125,7 @@ export const Dashboard = () => {
             </Descriptions>
           </Card>
         </Col>
-        <Col span={8}>
+        <Col sm={8} xs={24}>
           <Card title="Deribit 资产">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="钱包余额(btc)">
