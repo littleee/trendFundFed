@@ -9,30 +9,30 @@ export const Dashboard = () => {
 
   useEffect(() => {
     const fetchCharts = async () => {
-      const { data } = await axios.get(
-        `https://raw.githubusercontent.com/littleee/td/main/${
-          new Date()
-            .toISOString()
-            .replace(/T/, " ")
-            .replace(/\..+/, "")
-            .split(" ")[0]
-        }.json`
-      );
-      // const [
-      //   { data: ftxRes },
-      //   { data: deribitRes },
-      //   { data: binanceRes },
-      // ] = await Promise.all([
-      //   axios.get("http://littleee.com/api/ftxInfo"),
-      //   axios.get("http://littleee.com/api/deribitInfo"),
-      //   axios.get("http://littleee.com/api/binanceInfo"),
-      // ]);
-      setFtx(data[0][1]);
-      setBinance(data[0][2]);
-      setDeribit(data[0][3]);
-      // setBinance(binanceRes.result);
-      // setFtx(ftxRes.result);
-      // setDeribit(deribitRes.result);
+      // const { data } = await axios.get(
+      //   `https://raw.githubusercontent.com/littleee/td/main/${
+      //     new Date()
+      //       .toISOString()
+      //       .replace(/T/, " ")
+      //       .replace(/\..+/, "")
+      //       .split(" ")[0]
+      //   }.json`
+      // );
+      const [
+        { data: ftxRes },
+        { data: deribitRes },
+        { data: binanceRes },
+      ] = await Promise.all([
+        axios.get("http://littleee.com/api/ftxInfo"),
+        axios.get("http://littleee.com/api/deribitInfo"),
+        axios.get("http://littleee.com/api/binanceInfo"),
+      ]);
+      // setFtx(data[0][1]);
+      // setBinance(data[0][2]);
+      // setDeribit(data[0][3]);
+      setBinance(binanceRes.result);
+      setFtx(ftxRes.result);
+      setDeribit(deribitRes.result);
     };
     fetchCharts();
     const timer = setInterval(() => {
@@ -45,7 +45,7 @@ export const Dashboard = () => {
   console.log(new Date().toISOString());
   return (
     <div style={{ padding: "50px" }}>
-      <Card title="T1 总资产">
+      <Card title="T1 总资产1">
         <Descriptions bordered column={1} size="small">
           <Descriptions.Item label="USD">{ftx[5]}</Descriptions.Item>
           <Descriptions.Item label="BTC">
