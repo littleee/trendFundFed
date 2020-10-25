@@ -45,7 +45,7 @@ export const Dashboard = () => {
   console.log(new Date().toISOString());
   return (
     <div style={{ padding: "50px" }}>
-      <Card title="T1 总资产1">
+      <Card title="T1 总资产">
         <Descriptions bordered column={1} size="small">
           <Descriptions.Item label="USD">{ftx[5]}</Descriptions.Item>
           <Descriptions.Item label="BTC">
