@@ -82,19 +82,17 @@ export const Dashboard = () => {
               </Descriptions.Item>
             </Descriptions>
             <Descriptions bordered column={1} size="small">
-              <Descriptions.Item label="交易对">
-                {binance[10]}
-              </Descriptions.Item>
-              <Descriptions.Item label="杠杆">{binance[11]}</Descriptions.Item>
-              <Descriptions.Item label="仓位">{binance[12]}</Descriptions.Item>
+              <Descriptions.Item label="交易对">{binance[6]}</Descriptions.Item>
+              <Descriptions.Item label="杠杆">{binance[7]}</Descriptions.Item>
+              <Descriptions.Item label="仓位">{binance[8]}</Descriptions.Item>
               <Descriptions.Item label="合约面值">
-                {binance[13]}
+                {binance[9]}
               </Descriptions.Item>
               <Descriptions.Item label="持仓均价">
-                {binance[14]}
+                {binance[10]}
               </Descriptions.Item>
               <Descriptions.Item label="未实现盈亏">
-                {binance[15]}
+                {binance[11]}
               </Descriptions.Item>
             </Descriptions>
           </Card>
@@ -114,13 +112,13 @@ export const Dashboard = () => {
               <Descriptions.Item label="美元价值">{ftx[4]}</Descriptions.Item>
             </Descriptions>
             <Descriptions bordered column={1} size="small">
-              <Descriptions.Item label="交易对">{ftx[10]}</Descriptions.Item>
-              <Descriptions.Item label="杠杆">{ftx[11]}</Descriptions.Item>
-              <Descriptions.Item label="仓位">{ftx[12]}</Descriptions.Item>
-              <Descriptions.Item label="合约面值">{ftx[13]}</Descriptions.Item>
-              <Descriptions.Item label="持仓均价">{ftx[14]}</Descriptions.Item>
+              <Descriptions.Item label="交易对">{ftx[6]}</Descriptions.Item>
+              <Descriptions.Item label="杠杆">{ftx[7]}</Descriptions.Item>
+              <Descriptions.Item label="仓位">{ftx[8]}</Descriptions.Item>
+              <Descriptions.Item label="合约面值">{ftx[9]}</Descriptions.Item>
+              <Descriptions.Item label="持仓均价">{ftx[10]}</Descriptions.Item>
               <Descriptions.Item label="未实现盈亏">
-                {ftx[15]}
+                {ftx[11]}
               </Descriptions.Item>
             </Descriptions>
           </Card>
@@ -148,19 +146,17 @@ export const Dashboard = () => {
               </Descriptions.Item>
             </Descriptions>
             <Descriptions bordered column={1} size="small">
-              <Descriptions.Item label="交易对">
-                {deribit[10]}
-              </Descriptions.Item>
-              <Descriptions.Item label="杠杆">{deribit[11]}</Descriptions.Item>
-              <Descriptions.Item label="仓位">{deribit[12]}</Descriptions.Item>
+              <Descriptions.Item label="交易对">{deribit[6]}</Descriptions.Item>
+              <Descriptions.Item label="杠杆">{deribit[7]}</Descriptions.Item>
+              <Descriptions.Item label="仓位">{deribit[8]}</Descriptions.Item>
               <Descriptions.Item label="合约面值">
-                {deribit[13]}
+                {deribit[9]}
               </Descriptions.Item>
               <Descriptions.Item label="持仓均价">
-                {deribit[14]}
+                {deribit[10]}
               </Descriptions.Item>
               <Descriptions.Item label="未实现盈亏">
-                {deribit[15]}
+                {deribit[11]}
               </Descriptions.Item>
             </Descriptions>
           </Card>
