@@ -47,15 +47,17 @@ export const Dashboard = () => {
     <div>
       <Card title="T1 总资产">
         <Descriptions bordered column={1} size="small">
-          <Descriptions.Item label="USD">{ftx[5]}</Descriptions.Item>
+          <Descriptions.Item label="USD">{ftx[2]}</Descriptions.Item>
           <Descriptions.Item label="BTC">
             {(
-              Number(ftx[0]) +
-              Number(binance[2]) +
-              Number(deribit[2])
+              Number(ftx[1]) +
+              Number(binance[1]) +
+              Number(deribit[1])
             ).toString()}
           </Descriptions.Item>
-          <Descriptions.Item label="USD价值">--</Descriptions.Item>
+          <Descriptions.Item label="USD价值">
+            {ftx[6] + binance[6] + deribit[6]}
+          </Descriptions.Item>
         </Descriptions>
       </Card>
       <Row>
