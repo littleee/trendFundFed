@@ -110,7 +110,7 @@ export const Dashboard = () => {
     },
     series: [
       {
-        name: "累计收益",
+        name: "总美元价值",
         type: "line",
         data: tdUsdValue,
         itemStyle: {
