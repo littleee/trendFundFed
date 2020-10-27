@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Table, Descriptions, Card, Row, Col } from "antd";
+import { LineChart } from "../../components";
 
 export const Dashboard = () => {
   const [binance, setBinance] = useState([]);
   const [ftx, setFtx] = useState([]);
   const [deribit, setDeribit] = useState([]);
-
+  const [tdUsdValue, setTdUsdValue] = useState([]);
   useEffect(() => {
     const fetchCharts = async () => {
       // const { data } = await axios.get(
@@ -22,14 +23,32 @@ export const Dashboard = () => {
         { data: ftxRes },
         { data: deribitRes },
         { data: binanceRes },
+        { data: tdRes },
       ] = await Promise.all([
         axios.get("http://littleee.com/api/ftxInfo"),
         axios.get("http://littleee.com/api/deribitInfo"),
         axios.get("http://littleee.com/api/binanceInfo"),
+        axios.get(
+          `https://raw.githubusercontent.com/littleee/td/main/${
+            new Date()
+              .toISOString()
+              .replace(/T/, " ")
+              .replace(/\..+/, "")
+              .split(" ")[0]
+          }.json`
+        ),
       ]);
       // setFtx(data[0][1]);
       // setBinance(data[0][2]);
       // setDeribit(data[0][3]);
+
+      const usdValueChart = tdRes.map((x) => {
+        if (Array.isArray(x[0])) {
+          return x[0];
+        }
+        return [];
+      });
+      setTdUsdValue(usdValueChart);
       setBinance(binanceRes.result);
       setFtx(ftxRes.result);
       setDeribit(deribitRes.result);
@@ -41,8 +60,69 @@ export const Dashboard = () => {
 
     return () => clearInterval(timer);
   }, []);
+  const option = {
+    title: {
+      text: "总美元价值",
+    },
+    tooltip: {
+      trigger: "axis",
+    },
+    legend: {
+      data: [
+        {
+          name: "总美元价值",
+          // 强制设置图形为圆。
+          icon: "circle",
+        },
+      ],
+      right: 0,
+      top: 3,
+    },
+    grid: {
+      left: "3%",
+      right: "4%",
+      bottom: "3%",
+      containLabel: true,
+    },
+    xAxis: {
+      type: "time",
+      splitLine: {
+        show: false,
+      },
+      axisLine: {
+        lineStyle: {
+          color: "#888",
+        },
+      },
+    },
+    yAxis: {
+      type: "value",
+      axisLabel: {
+        show: true,
+        formatter: "{value}",
+      },
+      splitNumber: 3,
+      axisLine: {
+        lineStyle: {
+          color: "#888",
+        },
+      },
+    },
+    series: [
+      {
+        name: "总美元价值",
+        type: "line",
+        data: tdUsdValue,
+        itemStyle: {
+          color: "rgb(73,151,247)",
+        },
+        showSymbol: false,
+        hoverAnimation: false,
+      },
+    ],
+    animation: false,
+  };
 
-  console.log(new Date().toISOString());
   return (
     <div>
       <Card title="T1 总资产">
@@ -171,6 +251,7 @@ export const Dashboard = () => {
           </Card>
         </Col>
       </Row>
+      <LineChart option={option} />
     </div>
   );
 };
