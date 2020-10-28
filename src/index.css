@@ -28,3 +28,10 @@ code {
 .grey {
   color: rgba(19, 24, 31, 0.6);
 }
+
+.ant-descriptions-item-label {
+  width: 40%;
+}
+.ant-descriptions-item-content {
+  width: 60%;
+}
