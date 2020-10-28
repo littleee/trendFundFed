@@ -8,6 +8,7 @@ export const Dashboard = () => {
   const [ftx, setFtx] = useState([]);
   const [deribit, setDeribit] = useState([]);
   const [tdUsdValue, setTdUsdValue] = useState([]);
+  const [info, setInfo] = useState([]);
   useEffect(() => {
     const fetchCharts = async () => {
       // const { data } = await axios.get(
@@ -24,6 +25,7 @@ export const Dashboard = () => {
         { data: deribitRes },
         { data: binanceRes },
         { data: tdRes },
+        { data: infoRes },
       ] = await Promise.all([
         axios.get("http://littleee.com/api/ftxInfo"),
         axios.get("http://littleee.com/api/deribitInfo"),
@@ -37,11 +39,13 @@ export const Dashboard = () => {
               .split(" ")[0]
           }.json`
         ),
+        axios.get(
+          "https://raw.githubusercontent.com/littleee/sim/main/info.json"
+        ),
       ]);
       // setFtx(data[0][1]);
       // setBinance(data[0][2]);
       // setDeribit(data[0][3]);
-
       const usdValueChart = tdRes.map((x) => {
         if (Array.isArray(x[0])) {
           return x[0];
@@ -52,6 +56,7 @@ export const Dashboard = () => {
       setBinance(binanceRes.result);
       setFtx(ftxRes.result);
       setDeribit(deribitRes.result);
+      setInfo(infoRes);
     };
     fetchCharts();
     const timer = setInterval(() => {
@@ -131,6 +136,24 @@ export const Dashboard = () => {
   };
   return (
     <div>
+      <Card title="回测">
+        <Descriptions bordered column={1} size="small">
+          <Descriptions.Item label={`时间`}>
+            {info.length > 0
+              ? new Date(info[0].timestamp).toLocaleString()
+              : "--"}
+          </Descriptions.Item>
+          <Descriptions.Item label={`资产`}>
+            {info.length > 0 ? info[0].balance : "--"}
+          </Descriptions.Item>
+          <Descriptions.Item label={`仓位`}>
+            {info.length > 0 ? info[0].position : "--"}
+          </Descriptions.Item>
+          <Descriptions.Item label={`实际杠杆`}>
+            {info.length > 0 ? info[0].position / info[0].balance : "--"}
+          </Descriptions.Item>
+        </Descriptions>
+      </Card>
       <Card title="T1 总资产">
         <Descriptions bordered column={1} size="small">
           <Descriptions.Item label={`USD价值`}>
