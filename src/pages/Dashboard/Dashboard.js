@@ -9,6 +9,7 @@ export const Dashboard = () => {
   const [deribit, setDeribit] = useState([]);
   const [tdUsdValue, setTdUsdValue] = useState([]);
   const [info, setInfo] = useState([]);
+  const [td, setTd] = useState([]);
   useEffect(() => {
     const fetchCharts = async () => {
       // const { data } = await axios.get(
@@ -57,6 +58,7 @@ export const Dashboard = () => {
       setFtx(ftxRes.result);
       setDeribit(deribitRes.result);
       setInfo(infoRes);
+      setTd(tdRes);
     };
     fetchCharts();
     const timer = setInterval(() => {
@@ -136,6 +138,14 @@ export const Dashboard = () => {
   };
   const infoRealLeverage =
     info.length > 0 ? info[0].position / info[0].balance : undefined;
+  const getRealLevertageByTd = (exchange) => {
+    return infoRealLeverage &&
+      td.length > 0 &&
+      td[td.length - 1].length > 0 &&
+      td[td.length - 1][exchange].length > 0
+      ? td[td.length - 1][exchange][6] * infoRealLeverage
+      : "--";
+  };
   return (
     <div>
       <Card title="回测">
@@ -168,9 +178,7 @@ export const Dashboard = () => {
           <Card title="Binance 资产">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="应有仓位">
-                {infoRealLeverage && binance[6]
-                  ? binance[6] * infoRealLeverage
-                  : "--"}
+                {getRealLevertageByTd(2)}
               </Descriptions.Item>
               <Descriptions.Item label="实际杠杆">
                 {binance[0]}
@@ -214,7 +222,7 @@ export const Dashboard = () => {
           <Card title="FTX 仓位">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="应有仓位">
-                {infoRealLeverage && ftx[6] ? ftx[6] * infoRealLeverage : "--"}
+                {getRealLevertageByTd(1)}
               </Descriptions.Item>
               <Descriptions.Item label="实际杠杆">{ftx[0]}</Descriptions.Item>
               <Descriptions.Item label="钱包余额(btc)">
@@ -244,9 +252,7 @@ export const Dashboard = () => {
           <Card title="Deribit 资产">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="应有仓位">
-                {infoRealLeverage && deribit[6]
-                  ? deribit[6] * infoRealLeverage
-                  : "--"}
+                {getRealLevertageByTd(3)}
               </Descriptions.Item>
               <Descriptions.Item label="实际杠杆">
                 {deribit[0]}
