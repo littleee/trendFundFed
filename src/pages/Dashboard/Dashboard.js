@@ -129,21 +129,12 @@ export const Dashboard = () => {
     ],
     animation: false,
   };
-
   return (
     <div>
       <Card title="T1 总资产">
         <Descriptions bordered column={1} size="small">
-          <Descriptions.Item label="USD">{ftx[2]}</Descriptions.Item>
-          <Descriptions.Item label="BTC">
-            {(
-              Number(ftx[1]) +
-              Number(binance[1]) +
-              Number(deribit[1])
-            ).toString()}
-          </Descriptions.Item>
-          <Descriptions.Item label="USD价值">
-            {ftx[6] + binance[6] + deribit[6]}
+          <Descriptions.Item label={`USD价值`}>
+            {tdUsdValue.length > 0 && tdUsdValue[0][1]}
           </Descriptions.Item>
         </Descriptions>
       </Card>
