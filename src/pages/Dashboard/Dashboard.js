@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Table, Descriptions, Card, Row, Col } from "antd";
+import { Descriptions, Card, Row, Col } from "antd";
 import { LineChart } from "../../components";
 
 export const Dashboard = () => {
@@ -60,6 +60,11 @@ export const Dashboard = () => {
 
     return () => clearInterval(timer);
   }, []);
+  const currentDate = new Date()
+    .toISOString()
+    .replace(/T/, " ")
+    .replace(/\..+/, "")
+    .split(" ")[0];
   const option = {
     title: {
       text: "总美元价值",
@@ -94,6 +99,8 @@ export const Dashboard = () => {
           color: "#888",
         },
       },
+      min: +new Date(currentDate),
+      max: +new Date(currentDate) + 24 * 60 * 60 * 1000,
     },
     yAxis: {
       type: "value",
