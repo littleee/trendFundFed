@@ -134,6 +134,8 @@ export const Dashboard = () => {
     ],
     animation: false,
   };
+  const infoRealLeverage =
+    info.length > 0 ? info[0].position / info[0].balance : undefined;
   return (
     <div>
       <Card title="回测">
@@ -150,7 +152,7 @@ export const Dashboard = () => {
             {info.length > 0 ? info[0].position : "--"}
           </Descriptions.Item>
           <Descriptions.Item label={`实际杠杆`}>
-            {info.length > 0 ? info[0].position / info[0].balance : "--"}
+            {infoRealLeverage || "--"}
           </Descriptions.Item>
         </Descriptions>
       </Card>
@@ -165,6 +167,11 @@ export const Dashboard = () => {
         <Col sm={8} xs={24}>
           <Card title="Binance 资产">
             <Descriptions bordered column={1} size="small">
+              <Descriptions.Item label="应有仓位">
+                {infoRealLeverage && binance[6]
+                  ? binance[6] * infoRealLeverage
+                  : "--"}
+              </Descriptions.Item>
               <Descriptions.Item label="实际杠杆">
                 {binance[0]}
               </Descriptions.Item>
@@ -206,6 +213,9 @@ export const Dashboard = () => {
         <Col sm={8} xs={24}>
           <Card title="FTX 仓位">
             <Descriptions bordered column={1} size="small">
+              <Descriptions.Item label="应有仓位">
+                {infoRealLeverage && ftx[6] ? ftx[6] * infoRealLeverage : "--"}
+              </Descriptions.Item>
               <Descriptions.Item label="实际杠杆">{ftx[0]}</Descriptions.Item>
               <Descriptions.Item label="钱包余额(btc)">
                 {ftx[1]}
@@ -233,6 +243,11 @@ export const Dashboard = () => {
         <Col sm={8} xs={24}>
           <Card title="Deribit 资产">
             <Descriptions bordered column={1} size="small">
+              <Descriptions.Item label="应有仓位">
+                {infoRealLeverage && deribit[6]
+                  ? deribit[6] * infoRealLeverage
+                  : "--"}
+              </Descriptions.Item>
               <Descriptions.Item label="实际杠杆">
                 {deribit[0]}
               </Descriptions.Item>
