@@ -28,9 +28,9 @@ export const Dashboard = () => {
         { data: tdRes },
         { data: infoRes },
       ] = await Promise.all([
-        axios.get("http://littleee.com/api/ftxInfo"),
-        axios.get("http://littleee.com/api/deribitInfo"),
-        axios.get("http://littleee.com/api/binanceInfo"),
+        axios.get("https://littleee.com/api/ftxInfo"),
+        axios.get("https://littleee.com/api/deribitInfo"),
+        axios.get("https://littleee.com/api/binanceInfo"),
         axios.get(
           `https://raw.githubusercontent.com/littleee/td/main/${
             new Date()
