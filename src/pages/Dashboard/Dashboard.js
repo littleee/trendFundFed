@@ -41,7 +41,7 @@ export const Dashboard = () => {
           }.json`
         ),
         axios.get(
-          "https://raw.githubusercontent.com/littleee/sim/main/info.json"
+          "https://raw.githubusercontent.com/odofmine/sim/main/info.json"
         ),
       ]);
       // setFtx(data[0][1]);
@@ -137,7 +137,9 @@ export const Dashboard = () => {
     animation: false,
   };
   const infoRealLeverage =
-    info.length > 0 ? info[0].position / info[0].balance : undefined;
+    info.length > 0
+      ? info[info.length - 1][3] / info[info.length - 1][2]
+      : undefined;
   const getRealLevertageByTd = (exchange) => {
     return infoRealLeverage &&
       td.length > 0 &&
@@ -151,15 +153,13 @@ export const Dashboard = () => {
       <Card title="回测">
         <Descriptions bordered column={1} size="small">
           <Descriptions.Item label={`时间`}>
-            {info.length > 0
-              ? new Date(info[0].timestamp).toLocaleString()
-              : "--"}
+            {info.length > 0 ? info[info.length - 1][0] : "--"}
           </Descriptions.Item>
           <Descriptions.Item label={`资产`}>
-            {info.length > 0 ? info[0].balance : "--"}
+            {info.length > 0 ? info[info.length - 1][2] : "--"}
           </Descriptions.Item>
           <Descriptions.Item label={`仓位`}>
-            {info.length > 0 ? info[0].position : "--"}
+            {info.length > 0 ? info[info.length - 1][3] : "--"}
           </Descriptions.Item>
           <Descriptions.Item label={`实际杠杆`}>
             {infoRealLeverage || "--"}
