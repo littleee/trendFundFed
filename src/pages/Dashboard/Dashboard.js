@@ -12,15 +12,6 @@ export const Dashboard = () => {
   const [td, setTd] = useState([]);
   useEffect(() => {
     const fetchCharts = async () => {
-      // const { data } = await axios.get(
-      //   `https://raw.githubusercontent.com/littleee/td/main/${
-      //     new Date()
-      //       .toISOString()
-      //       .replace(/T/, " ")
-      //       .replace(/\..+/, "")
-      //       .split(" ")[0]
-      //   }.json`
-      // );
       const [
         { data: ftxRes },
         { data: deribitRes },
@@ -150,29 +141,35 @@ export const Dashboard = () => {
   };
   return (
     <div>
-      <Card title="回测">
-        <Descriptions bordered column={1} size="small">
-          <Descriptions.Item label={`时间`}>
-            {info.length > 0 ? info[info.length - 1][0] : "--"}
-          </Descriptions.Item>
-          <Descriptions.Item label={`资产`}>
-            {info.length > 0 ? info[info.length - 1][2] : "--"}
-          </Descriptions.Item>
-          <Descriptions.Item label={`仓位`}>
-            {info.length > 0 ? info[info.length - 1][3] : "--"}
-          </Descriptions.Item>
-          <Descriptions.Item label={`实际杠杆`}>
-            {infoRealLeverage || "--"}
-          </Descriptions.Item>
-        </Descriptions>
-      </Card>
-      <Card title="T1 总资产">
-        <Descriptions bordered column={1} size="small">
-          <Descriptions.Item label={`USD价值`}>
-            {tdUsdValue.length > 0 && tdUsdValue[0][1]}
-          </Descriptions.Item>
-        </Descriptions>
-      </Card>
+      <Row>
+        <Col xs={12}>
+          <Card title="回测">
+            <Descriptions bordered column={1} size="small">
+              <Descriptions.Item label={`时间`}>
+                {info.length > 0 ? info[info.length - 1][0] : "--"}
+              </Descriptions.Item>
+              <Descriptions.Item label={`资产`}>
+                {info.length > 0 ? info[info.length - 1][2] : "--"}
+              </Descriptions.Item>
+              <Descriptions.Item label={`仓位`}>
+                {info.length > 0 ? info[info.length - 1][3] : "--"}
+              </Descriptions.Item>
+              <Descriptions.Item label={`实际杠杆`}>
+                {infoRealLeverage || "--"}
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+        </Col>
+        <Col xs={12}>
+          <Card title="T1 总资产">
+            <Descriptions bordered column={1} size="small">
+              <Descriptions.Item label={`USD价值`}>
+                {tdUsdValue.length > 0 && tdUsdValue[0][1]}
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+        </Col>
+      </Row>
       <Row>
         <Col sm={8} xs={24}>
           <Card title="Binance">
