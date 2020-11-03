@@ -175,7 +175,7 @@ export const Dashboard = () => {
       </Card>
       <Row>
         <Col sm={8} xs={24}>
-          <Card title="Binance 资产">
+          <Card title="Binance">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="应有仓位">
                 {getRealLevertageByTd(2)}
@@ -219,7 +219,7 @@ export const Dashboard = () => {
           </Card>
         </Col>
         <Col sm={8} xs={24}>
-          <Card title="FTX 仓位">
+          <Card title="FTX">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="应有仓位">
                 {getRealLevertageByTd(1)}
@@ -249,7 +249,7 @@ export const Dashboard = () => {
           </Card>
         </Col>
         <Col sm={8} xs={24}>
-          <Card title="Deribit 资产">
+          <Card title="Deribit">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="应有仓位">
                 {getRealLevertageByTd(3)}
