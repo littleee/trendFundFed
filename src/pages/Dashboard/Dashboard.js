@@ -177,6 +177,7 @@ export const Dashboard = () => {
               <Descriptions.Item label="应有仓位">
                 {getRealLevertageByTd(2)}
               </Descriptions.Item>
+              <Descriptions.Item label="总仓位">{binance[9]}</Descriptions.Item>
               <Descriptions.Item label="实际杠杆">
                 {binance[0]}
               </Descriptions.Item>
@@ -221,6 +222,9 @@ export const Dashboard = () => {
               <Descriptions.Item label="应有仓位">
                 {getRealLevertageByTd(1)}
               </Descriptions.Item>
+              <Descriptions.Item label="总仓位">
+                {ftx[10] - ftx[2]}
+              </Descriptions.Item>
               <Descriptions.Item label="实际杠杆">{ftx[0]}</Descriptions.Item>
               <Descriptions.Item label="钱包余额(btc)">
                 {ftx[1]}
@@ -251,6 +255,7 @@ export const Dashboard = () => {
               <Descriptions.Item label="应有仓位">
                 {getRealLevertageByTd(3)}
               </Descriptions.Item>
+              <Descriptions.Item label="总仓位">{deribit[9]}</Descriptions.Item>
               <Descriptions.Item label="实际杠杆">
                 {deribit[0]}
               </Descriptions.Item>
