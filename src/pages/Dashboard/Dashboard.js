@@ -115,7 +115,7 @@ export const Dashboard = () => {
         show: true,
         formatter: "{value}",
       },
-      splitNumber: 3,
+      scale: true,
       axisLine: {
         lineStyle: {
           color: "#888",
