@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Descriptions, Card, Row, Col } from "antd";
 import { LineChart } from "../../components";
+import { formatNumber, formatArrNumber } from "utils";
 
 export const Dashboard = () => {
   const [binance, setBinance] = useState([]);
@@ -38,21 +39,18 @@ export const Dashboard = () => {
           "https://raw.githubusercontent.com/odofmine/sim/main/info.json"
         ),
       ]);
-      // setFtx(data[0][1]);
-      // setBinance(data[0][2]);
-      // setDeribit(data[0][3]);
       const usdValueChart = tdRes.map((x) => {
         if (Array.isArray(x[0])) {
           return x[0];
         }
         return [];
       });
-      setTdUsdValue(usdValueChart);
-      setBinance(binanceRes.result);
-      setFtx(ftxRes.result);
-      setKraken(krakenRes.result);
-      setDeribit(deribitRes.result);
-      setInfo(infoRes);
+      setTdUsdValue(formatArrNumber(usdValueChart));
+      setBinance(formatArrNumber(binanceRes.result));
+      setFtx(formatArrNumber(ftxRes.result));
+      setKraken(formatArrNumber(krakenRes.result));
+      setDeribit(formatArrNumber(deribitRes.result));
+      setInfo(formatArrNumber(infoRes));
       setTd(tdRes);
     };
     fetchCharts();
@@ -160,7 +158,7 @@ export const Dashboard = () => {
                 {info.length > 0 ? info[info.length - 1][3] : "--"}
               </Descriptions.Item>
               <Descriptions.Item label={`实际杠杆`}>
-                {infoRealLeverage || "--"}
+                {formatNumber(infoRealLeverage, 8) || "--"}
               </Descriptions.Item>
             </Descriptions>
           </Card>
@@ -169,7 +167,7 @@ export const Dashboard = () => {
           <Card title="T1 总资产">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label={`USD价值`}>
-                {tdUsdValue.length > 0 && tdUsdValue[0][1]}
+                {tdUsdValue.length > 0 && formatNumber(tdUsdValue[0][1], 8)}
               </Descriptions.Item>
             </Descriptions>
           </Card>
@@ -180,14 +178,14 @@ export const Dashboard = () => {
           <Card title="FTX">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="应有仓位">
-                {getRealLevertageByTd(1)}
+                {formatNumber(getRealLevertageByTd(1), 8)}
               </Descriptions.Item>
               <Descriptions.Item label="总仓位">
-                {ftx[10] - ftx[2]}
+                {formatNumber(ftx[10] - ftx[2], 8)}
               </Descriptions.Item>
               <Descriptions.Item label="美元价值">{ftx[6]}</Descriptions.Item>
               <Descriptions.Item label="实际杠杆">
-                {(ftx[10] - ftx[2]) / ftx[6]}
+                {formatNumber((ftx[10] - ftx[2]) / ftx[6], 8)}
               </Descriptions.Item>
               <Descriptions.Item label="钱包余额(btc)">
                 {ftx[1]}
@@ -215,7 +213,7 @@ export const Dashboard = () => {
           <Card title="Binance">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="应有仓位">
-                {getRealLevertageByTd(2)}
+                {formatNumber(getRealLevertageByTd(2), 8)}
               </Descriptions.Item>
               <Descriptions.Item label="总仓位">{binance[9]}</Descriptions.Item>
               <Descriptions.Item label="美元价值">
@@ -260,7 +258,7 @@ export const Dashboard = () => {
           <Card title="Deribit">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="应有仓位">
-                {getRealLevertageByTd(3)}
+                {formatNumber(getRealLevertageByTd(3), 8)}
               </Descriptions.Item>
               <Descriptions.Item label="总仓位">{deribit[9]}</Descriptions.Item>
               <Descriptions.Item label="美元价值">
@@ -305,7 +303,7 @@ export const Dashboard = () => {
           <Card title="Kraken">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="应有仓位">
-                {getRealLevertageByTd(4)}
+                {formatNumber(getRealLevertageByTd(4), 8)}
               </Descriptions.Item>
               <Descriptions.Item label="总仓位">{kraken[9]}</Descriptions.Item>
               <Descriptions.Item label="美元价值">

@@ -68,3 +68,17 @@ export const getNumberWithDecimal = (number = 0, decimal = 0) => {
     return decimalFull(result, decimal);
   }
 };
+
+export const formatNumber = (number, digit) => {
+  const multiplier = Math.pow(10, digit || 8);
+  return Math.floor(Number(number) * multiplier) / multiplier;
+};
+
+export const formatArrNumber = (arr) => {
+  return arr.map((x) => {
+    if (!isNaN(x)) {
+      return formatNumber(x, 8);
+    }
+    return x;
+  });
+};
