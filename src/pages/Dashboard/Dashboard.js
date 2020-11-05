@@ -10,18 +10,21 @@ export const Dashboard = () => {
   const [tdUsdValue, setTdUsdValue] = useState([]);
   const [info, setInfo] = useState([]);
   const [td, setTd] = useState([]);
+  const [kraken, setKraken] = useState([]);
   useEffect(() => {
     const fetchCharts = async () => {
       const [
         { data: ftxRes },
         { data: deribitRes },
         { data: binanceRes },
+        { data: krakenRes },
         { data: tdRes },
         { data: infoRes },
       ] = await Promise.all([
         axios.get("https://littleee.com/api/ftxInfo"),
         axios.get("https://littleee.com/api/deribitInfo"),
         axios.get("https://littleee.com/api/binanceInfo"),
+        axios.get("https://littleee.com/api/krakenInfo"),
         axios.get(
           `https://raw.githubusercontent.com/littleee/td/main/${
             new Date()
@@ -47,6 +50,7 @@ export const Dashboard = () => {
       setTdUsdValue(usdValueChart);
       setBinance(binanceRes.result);
       setFtx(ftxRes.result);
+      setKraken(krakenRes.result);
       setDeribit(deribitRes.result);
       setInfo(infoRes);
       setTd(tdRes);
@@ -135,6 +139,7 @@ export const Dashboard = () => {
     return infoRealLeverage &&
       td.length > 0 &&
       td[td.length - 1].length > 0 &&
+      td[td.length - 1][exchange] &&
       td[td.length - 1][exchange].length > 0
       ? td[td.length - 1][exchange][6] * infoRealLeverage
       : "--";
@@ -142,7 +147,7 @@ export const Dashboard = () => {
   return (
     <div>
       <Row>
-        <Col xs={12}>
+        <Col xs={24} sm={12}>
           <Card title="回测">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label={`时间`}>
@@ -160,7 +165,7 @@ export const Dashboard = () => {
             </Descriptions>
           </Card>
         </Col>
-        <Col xs={12}>
+        <Col xs={24} sm={12}>
           <Card title="T1 总资产">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label={`USD价值`}>
@@ -171,52 +176,7 @@ export const Dashboard = () => {
         </Col>
       </Row>
       <Row>
-        <Col sm={8} xs={24}>
-          <Card title="Binance">
-            <Descriptions bordered column={1} size="small">
-              <Descriptions.Item label="应有仓位">
-                {getRealLevertageByTd(2)}
-              </Descriptions.Item>
-              <Descriptions.Item label="总仓位">{binance[9]}</Descriptions.Item>
-              <Descriptions.Item label="美元价值">
-                {binance[6]}
-              </Descriptions.Item>
-              <Descriptions.Item label="实际杠杆">
-                {binance[9] / binance[6]}
-              </Descriptions.Item>
-              <Descriptions.Item label="钱包余额(btc)">
-                {binance[1]}
-              </Descriptions.Item>
-              <Descriptions.Item label="钱包余额(usd)">
-                {binance[2]}
-              </Descriptions.Item>
-              <Descriptions.Item label="未实现盈亏">
-                {binance[3]}
-              </Descriptions.Item>
-              <Descriptions.Item label="保证金余额">
-                {binance[4]}
-              </Descriptions.Item>
-              <Descriptions.Item label="可用余额">
-                {binance[5]}
-              </Descriptions.Item>
-            </Descriptions>
-            <Descriptions bordered column={1} size="small">
-              <Descriptions.Item label="交易对">{binance[7]}</Descriptions.Item>
-              <Descriptions.Item label="杠杆">{binance[8]}</Descriptions.Item>
-              <Descriptions.Item label="仓位">{binance[9]}</Descriptions.Item>
-              <Descriptions.Item label="合约面值">
-                {binance[10]}
-              </Descriptions.Item>
-              <Descriptions.Item label="持仓均价">
-                {binance[11]}
-              </Descriptions.Item>
-              <Descriptions.Item label="未实现盈亏">
-                {binance[12]}
-              </Descriptions.Item>
-            </Descriptions>
-          </Card>
-        </Col>
-        <Col sm={8} xs={24}>
+        <Col sm={6} xs={24}>
           <Card title="FTX">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="应有仓位">
@@ -251,7 +211,52 @@ export const Dashboard = () => {
             </Descriptions>
           </Card>
         </Col>
-        <Col sm={8} xs={24}>
+        <Col sm={6} xs={24}>
+          <Card title="Binance">
+            <Descriptions bordered column={1} size="small">
+              <Descriptions.Item label="应有仓位">
+                {getRealLevertageByTd(2)}
+              </Descriptions.Item>
+              <Descriptions.Item label="总仓位">{binance[9]}</Descriptions.Item>
+              <Descriptions.Item label="美元价值">
+                {binance[6]}
+              </Descriptions.Item>
+              <Descriptions.Item label="实际杠杆">
+                {binance[0]}
+              </Descriptions.Item>
+              <Descriptions.Item label="钱包余额(btc)">
+                {binance[1]}
+              </Descriptions.Item>
+              <Descriptions.Item label="钱包余额(usd)">
+                {binance[2]}
+              </Descriptions.Item>
+              <Descriptions.Item label="未实现盈亏">
+                {binance[3]}
+              </Descriptions.Item>
+              <Descriptions.Item label="保证金余额">
+                {binance[4]}
+              </Descriptions.Item>
+              <Descriptions.Item label="可用余额">
+                {binance[5]}
+              </Descriptions.Item>
+            </Descriptions>
+            <Descriptions bordered column={1} size="small">
+              <Descriptions.Item label="交易对">{binance[7]}</Descriptions.Item>
+              <Descriptions.Item label="杠杆">{binance[8]}</Descriptions.Item>
+              <Descriptions.Item label="仓位">{binance[9]}</Descriptions.Item>
+              <Descriptions.Item label="合约面值">
+                {binance[10]}
+              </Descriptions.Item>
+              <Descriptions.Item label="持仓均价">
+                {binance[11]}
+              </Descriptions.Item>
+              <Descriptions.Item label="未实现盈亏">
+                {binance[12]}
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+        </Col>
+        <Col sm={6} xs={24}>
           <Card title="Deribit">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="应有仓位">
@@ -262,7 +267,7 @@ export const Dashboard = () => {
                 {deribit[6]}
               </Descriptions.Item>
               <Descriptions.Item label="实际杠杆">
-                {deribit[9] / deribit[6]}
+                {deribit[0]}
               </Descriptions.Item>
               <Descriptions.Item label="钱包余额(btc)">
                 {deribit[1]}
@@ -292,6 +297,51 @@ export const Dashboard = () => {
               </Descriptions.Item>
               <Descriptions.Item label="未实现盈亏">
                 {deribit[12]}
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+        </Col>
+        <Col sm={6} xs={24}>
+          <Card title="Kraken">
+            <Descriptions bordered column={1} size="small">
+              <Descriptions.Item label="应有仓位">
+                {getRealLevertageByTd(4)}
+              </Descriptions.Item>
+              <Descriptions.Item label="总仓位">{kraken[9]}</Descriptions.Item>
+              <Descriptions.Item label="美元价值">
+                {kraken[6]}
+              </Descriptions.Item>
+              <Descriptions.Item label="实际杠杆">
+                {kraken[0]}
+              </Descriptions.Item>
+              <Descriptions.Item label="钱包余额(btc)">
+                {kraken[1]}
+              </Descriptions.Item>
+              <Descriptions.Item label="钱包余额(usd)">
+                {kraken[2]}
+              </Descriptions.Item>
+              <Descriptions.Item label="未实现盈亏">
+                {kraken[3]}
+              </Descriptions.Item>
+              <Descriptions.Item label="保证金余额">
+                {kraken[4]}
+              </Descriptions.Item>
+              <Descriptions.Item label="可用余额">
+                {kraken[5]}
+              </Descriptions.Item>
+            </Descriptions>
+            <Descriptions bordered column={1} size="small">
+              <Descriptions.Item label="交易对">{kraken[7]}</Descriptions.Item>
+              <Descriptions.Item label="杠杆">{kraken[8]}</Descriptions.Item>
+              <Descriptions.Item label="仓位">{kraken[9]}</Descriptions.Item>
+              <Descriptions.Item label="合约面值">
+                {kraken[10]}
+              </Descriptions.Item>
+              <Descriptions.Item label="持仓均价">
+                {kraken[11]}
+              </Descriptions.Item>
+              <Descriptions.Item label="未实现盈亏">
+                {kraken[12]}
               </Descriptions.Item>
             </Descriptions>
           </Card>
