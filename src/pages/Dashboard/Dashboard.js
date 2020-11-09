@@ -180,7 +180,9 @@ export const Dashboard = () => {
               <Descriptions.Item label="应有仓位">
                 {formatNumber(getRealLevertageByTd(1), 8)}
               </Descriptions.Item>
-              <Descriptions.Item label="总仓位">{ftx[9]}</Descriptions.Item>
+              <Descriptions.Item label="总仓位">
+                {ftx[10] - ftx[2]}
+              </Descriptions.Item>
               <Descriptions.Item label="美元价值">{ftx[6]}</Descriptions.Item>
               <Descriptions.Item label="实际杠杆">{ftx[0]}</Descriptions.Item>
               <Descriptions.Item label="钱包余额(btc)">
