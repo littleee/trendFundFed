@@ -198,7 +198,9 @@ export const Dashboard = () => {
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="交易对">{ftx[7]}</Descriptions.Item>
               <Descriptions.Item label="杠杆">{ftx[8]}</Descriptions.Item>
-              <Descriptions.Item label="仓位">{ftx[9]}</Descriptions.Item>
+              <Descriptions.Item label="仓位">
+                {ftx[9]} = {ftx[9] * ftx[11]}
+              </Descriptions.Item>
               <Descriptions.Item label="合约面值">{ftx[10]}</Descriptions.Item>
               <Descriptions.Item label="持仓均价">{ftx[11]}</Descriptions.Item>
               <Descriptions.Item label="未实现盈亏">
