@@ -201,7 +201,9 @@ export const Dashboard = () => {
               <Descriptions.Item label="仓位">
                 {ftx[9]} = {ftx[9] * ftx[11]}
               </Descriptions.Item>
-              <Descriptions.Item label="合约面值">{ftx[10]}</Descriptions.Item>
+              <Descriptions.Item label="合约面值">
+                {ftx[10]} = {ftx[10] - ftx[12]}
+              </Descriptions.Item>
               <Descriptions.Item label="持仓均价">{ftx[11]}</Descriptions.Item>
               <Descriptions.Item label="未实现盈亏">
                 {ftx[12]}
