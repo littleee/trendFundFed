@@ -169,6 +169,20 @@ export const Dashboard = () => {
               <Descriptions.Item label={`USD价值`}>
                 {tdUsdValue.length > 0 && formatNumber(tdUsdValue[0][1], 8)}
               </Descriptions.Item>
+              <Descriptions.Item label={`仓位`}>
+                {formatNumber(
+                  ftx[10] - ftx[2] + binance[9] + deribit[9] + kraken[9],
+                  8
+                )}
+              </Descriptions.Item>
+              <Descriptions.Item label={`杠杆`}>
+                {tdUsdValue.length > 0 &&
+                  formatNumber(
+                    (ftx[10] - ftx[2] + binance[9] + deribit[9] + kraken[9]) /
+                      tdUsdValue[0][1],
+                    8
+                  )}
+              </Descriptions.Item>
             </Descriptions>
           </Card>
         </Col>
