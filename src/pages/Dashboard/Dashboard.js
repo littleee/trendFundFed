@@ -142,6 +142,9 @@ export const Dashboard = () => {
       ? td[td.length - 1][exchange][6] * infoRealLeverage
       : "--";
   };
+  const totalUsd = (a, b, c, d) => {
+    return a + b + c + d;
+  };
   return (
     <div>
       <Row>
@@ -167,7 +170,10 @@ export const Dashboard = () => {
           <Card title="T1 总资产">
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label={`USD价值`}>
-                {tdUsdValue.length > 0 && formatNumber(tdUsdValue[0][1], 8)}
+                {formatNumber(
+                  totalUsd(ftx[6], binance[6], deribit[6], kraken[6]),
+                  8
+                )}
               </Descriptions.Item>
               <Descriptions.Item label={`仓位`}>
                 {formatNumber(
@@ -176,12 +182,11 @@ export const Dashboard = () => {
                 )}
               </Descriptions.Item>
               <Descriptions.Item label={`杠杆`}>
-                {tdUsdValue.length > 0 &&
-                  formatNumber(
-                    (ftx[10] - ftx[2] + binance[9] + deribit[9] + kraken[9]) /
-                      tdUsdValue[0][1],
-                    8
-                  )}
+                {formatNumber(
+                  (ftx[10] - ftx[2] + binance[9] + deribit[9] + kraken[9]) /
+                    totalUsd(ftx[6], binance[6], deribit[6], kraken[6]),
+                  8
+                )}
               </Descriptions.Item>
             </Descriptions>
           </Card>
