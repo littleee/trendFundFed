@@ -169,7 +169,7 @@ export const Dashboard = () => {
         <Col xs={24} sm={12}>
           <Card title="T1 总资产">
             <Descriptions bordered column={1} size="small">
-              <Descriptions.Item label={`USD价值`}>
+              <Descriptions.Item label={`USD价值:`}>
                 {formatNumber(
                   totalUsd(ftx[6], binance[6], deribit[6], kraken[6]),
                   8
